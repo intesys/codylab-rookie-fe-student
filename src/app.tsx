@@ -1,4 +1,4 @@
-import Layout from "@components/Layout/layout";
+import Layout from "@components/Layout/Layout";
 import { customTheme } from "@config/themeStyle";
 import { MaterialProvider } from "@context/MaterialProvider";
 import { ThemeProvider } from "@mui/material";
