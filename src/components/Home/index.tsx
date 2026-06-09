@@ -19,7 +19,7 @@ const Home: React.FC = () => {
       <CallToActions />
 
       <Grid container spacing={4} className="home__row home__main">
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Typography variant="overline" fontSize="medium">
             Materials are running out
           </Typography>
@@ -27,7 +27,7 @@ const Home: React.FC = () => {
             <MaterialList />
           </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Typography variant="overline" fontSize="medium">
             Calendar
           </Typography>

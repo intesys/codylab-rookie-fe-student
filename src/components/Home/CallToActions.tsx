@@ -25,13 +25,13 @@ const CallToActions: React.FC = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Grid item xs={6} display="flex" justifyContent="flex-end" alignItems="center">
+      <Grid size={6} display="flex" justifyContent="flex-end" alignItems="center">
         <Button variant="contained" sx={IconSx} onClick={() => navigate(getNewDetailPath(PATIENTS_PATH))}>
           <Add sx={{ width: 60, height: 60 }} />
           Register new patient
         </Button>
       </Grid>
-      <Grid item xs={6} display="flex" justifyContent="flex-start" alignItems="center">
+      <Grid size={6} display="flex" justifyContent="flex-start" alignItems="center">
         <Button
           sx={{ ...IconSx, background: "#fff" }}
           color="secondary"

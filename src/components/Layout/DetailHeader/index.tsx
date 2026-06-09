@@ -15,7 +15,7 @@ const DetailHeader: FC<IProps> = ({ record, subTitle, detailType, edit, children
   return (
     <Card>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Stack direction="row" alignItems="center">
             <Avatar
               alt={`${record?.name} ${record?.surname}`}
@@ -34,7 +34,7 @@ const DetailHeader: FC<IProps> = ({ record, subTitle, detailType, edit, children
             </Stack>
           </Stack>
         </Grid>
-        <Grid item xs={6} textAlign="right" pr={2}>
+        <Grid size={6} textAlign="right" pr={2}>
           {children}
         </Grid>
       </Grid>

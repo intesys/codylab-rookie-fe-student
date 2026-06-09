@@ -7,12 +7,12 @@ const logoUrl = new URL("../../../assets/logo.png", import.meta.url);
 
 const Menu: React.FC = () => (
   <Grid container spacing={0} className="layout-header-menu" justifyContent="center" alignItems="center">
-    <Grid item xs={2} className="logo">
+    <Grid size={2} className="logo">
       <Link to={HOME_PATH}>
         <img src={logoUrl.href} alt="open hospital" />
       </Link>
     </Grid>
-    <Grid item xs={10} className="menu">
+    <Grid size={10} className="menu">
       <MainMenu />
     </Grid>
   </Grid>

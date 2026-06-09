@@ -6,7 +6,7 @@ interface IProps extends React.PropsWithChildren {}
 
 const Body: React.FC<IProps> = ({ children }) => (
   <div className="layout-body">
-    <Grid item xs={12}>
+    <Grid size={12}>
       {children}
     </Grid>
   </div>

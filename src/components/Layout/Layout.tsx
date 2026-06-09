@@ -10,13 +10,13 @@ interface IProps extends React.PropsWithChildren {}
 const Layout: React.FC<IProps> = ({ children }) => (
   <div className="layout">
     <Grid container spacing={4} className="layout__no-margin">
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Header />
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Body>{children}</Body>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Footer />
       </Grid>
     </Grid>

@@ -11,10 +11,10 @@ const Header: React.FC = () => {
   const nextMonth = () => dispatch({ type: "NEXT_MONTH" });
   return (
     <Grid container spacing={4} className="calendar__navigation">
-      <Grid item xs={6} className="calendar__navigation__date">
+      <Grid size={6} className="calendar__navigation__date">
         {monthName(date)} {date.getFullYear()}
       </Grid>
-      <Grid item xs={6} className="calendar__navigation__buttons">
+      <Grid size={6} className="calendar__navigation__buttons">
         <Button onClick={prevMonth}>{/* <ChevronLeft /> */}</Button>
         <Button onClick={nextMonth}>{/* <ChevronRight /> */}</Button>
       </Grid>

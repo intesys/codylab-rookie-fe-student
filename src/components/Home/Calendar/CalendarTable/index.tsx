@@ -6,10 +6,10 @@ import React from "react";
 
 const CalendarTable: React.FC = () => (
   <Grid container spacing={4}>
-    <Grid item xs={4}>
+    <Grid size={4}>
       <SelectedDate />
     </Grid>
-    <Grid item xs={8}>
+    <Grid size={8}>
       <Header />
       <Table />
     </Grid>

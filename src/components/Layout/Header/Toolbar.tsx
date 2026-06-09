@@ -18,13 +18,13 @@ const Toolbar: React.FC = () => (
     alignItems="center"
     padding={1}
   >
-    <Grid item xs={6} className="layout-header-toolbar-welcome-message">
+    <Grid size={6} className="layout-header-toolbar-welcome-message">
       Hospital St. Democrito - Welcome back,{" "}
       <Typography variant="body2" color="primary" component="strong">
         Mario Rossi
       </Typography>
     </Grid>
-    <Grid item xs={6} className="layout-header-toolbar-menu">
+    <Grid size={6} className="layout-header-toolbar-menu">
       <div className="layout-header-toolbar-menu-search">
         <TextField
           size="small"
