@@ -20,7 +20,7 @@ const Home: React.FC = () => {
 
       <Grid container spacing={4} className="home__row home__main">
         <Grid size={6}>
-          <Typography variant="overline" fontSize="medium">
+          <Typography variant="overline" sx={{ fontSize: "medium" }}>
             Materials are running out
           </Typography>
           <Card>
@@ -28,7 +28,7 @@ const Home: React.FC = () => {
           </Card>
         </Grid>
         <Grid size={6}>
-          <Typography variant="overline" fontSize="medium">
+          <Typography variant="overline" sx={{ fontSize: "medium" }}>
             Calendar
           </Typography>
           <Card>
