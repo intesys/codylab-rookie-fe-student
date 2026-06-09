@@ -8,7 +8,7 @@ import "./index.scss";
 const Home: React.FC = () => {
   return (
     <div className="home">
-      <Box textAlign="center">
+      <Box sx={{ textAlign: "center" }}>
         <Typography variant="h5">
           Welcome{" "}
           <Typography variant="h5" color="primary" component="span">

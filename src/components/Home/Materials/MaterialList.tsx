@@ -1,7 +1,7 @@
 import MaterialItem from "@components/Home/Materials/MaterialItem";
 import { IMaterialItem } from "@components/Home/Materials/Types";
 import { MaterialContext } from "@context/MaterialProvider";
-import { Tab, Tabs } from "@mui/material";
+import { Button, Tab, Tabs } from "@mui/material";
 import React, { useContext, useState } from "react";
 
 const MaterialList: React.FC = () => {
@@ -30,7 +30,9 @@ const MaterialList: React.FC = () => {
         <MaterialItem {...item} key={item.id} />
       ))}
 
-      <Tab className="drug_list__see_all_button" label="See all materials"></Tab>
+      <Button className="drug_list__see_all_button" variant="text">
+        See all materials
+      </Button>
     </React.Fragment>
   );
 };

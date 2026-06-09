@@ -7,13 +7,13 @@ interface IProps extends React.PropsWithChildren {
 
 const SectionHeader: FC<IProps> = ({ title, children }) => {
   return (
-    <Grid container spacing={2} mb={2}>
+    <Grid container spacing={2} sx={{ mb: 2 }}>
       <Grid size={6}>
-        <Typography component="h1" variant="h6" textTransform="uppercase">
+        <Typography component="h1" variant="h6" sx={{ textTransform: "uppercase" }}>
           {title}
         </Typography>
       </Grid>
-      <Grid size={6} textAlign="right">
+      <Grid size={6} sx={{ textAlign: "right" }}>
         {children}
       </Grid>
     </Grid>

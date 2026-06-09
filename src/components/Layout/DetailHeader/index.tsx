@@ -14,9 +14,9 @@ interface IProps extends React.PropsWithChildren {
 const DetailHeader: FC<IProps> = ({ record, subTitle, detailType, edit, children }) => {
   return (
     <Card>
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={2} sx={{ alignItems: "center" }}>
         <Grid size={6}>
-          <Stack direction="row" alignItems="center">
+          <Stack direction="row" sx={{ alignItems: "center" }}>
             <Avatar
               alt={`${record?.name} ${record?.surname}`}
               src={generateAvatarImage(detailType, record?.id)}
@@ -34,7 +34,7 @@ const DetailHeader: FC<IProps> = ({ record, subTitle, detailType, edit, children
             </Stack>
           </Stack>
         </Grid>
-        <Grid size={6} textAlign="right" pr={2}>
+        <Grid size={6} sx={{ textAlign: "right", pr: 2 }}>
           {children}
         </Grid>
       </Grid>

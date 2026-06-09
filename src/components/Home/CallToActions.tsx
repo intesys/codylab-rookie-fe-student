@@ -22,16 +22,15 @@ const CallToActions: React.FC = () => {
       spacing={4}
       className="home__row home__call_to_actions"
       direction="row"
-      justifyContent="center"
-      alignItems="center"
+      sx={{ justifyContent: "center", alignItems: "center" }}
     >
-      <Grid size={6} display="flex" justifyContent="flex-end" alignItems="center">
+      <Grid size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
         <Button variant="contained" sx={IconSx} onClick={() => navigate(getNewDetailPath(PATIENTS_PATH))}>
           <Add sx={{ width: 60, height: 60 }} />
           Register new patient
         </Button>
       </Grid>
-      <Grid size={6} display="flex" justifyContent="flex-start" alignItems="center">
+      <Grid size={6} sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
         <Button
           sx={{ ...IconSx, background: "#fff" }}
           color="secondary"

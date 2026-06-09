@@ -16,11 +16,8 @@ const MaterialItem: React.FC<IMaterialItem> = ({ name, alert, quantity, weeksFor
     </Grid>
     <Grid
       container
-      // flexDirection="row"
-      alignItems="flex-end"
-      alignContent="center"
-      textAlign="center"
       spacing={4}
+      sx={{ alignItems: "flex-end", alignContent: "center", textAlign: "center" }}
     >
       <Grid size={4}>
         <div className="drug_list__item__quantity">{quantity}</div>

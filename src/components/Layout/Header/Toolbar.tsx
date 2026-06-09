@@ -5,7 +5,7 @@ import {
   Search,
   SettingsOutlined,
 } from "@mui/icons-material";
-import { Box, Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import React from "react";
 
 const Toolbar: React.FC = () => (
@@ -13,10 +13,7 @@ const Toolbar: React.FC = () => (
     container
     spacing={4}
     className="layout-header-toolbar"
-    // direction="row"
-    justifyContent="center"
-    alignItems="center"
-    padding={1}
+    sx={{ justifyContent: "center", alignItems: "center", p: 1 }}
   >
     <Grid size={6} className="layout-header-toolbar-welcome-message">
       Hospital St. Democrito - Welcome back,{" "}
@@ -32,8 +29,14 @@ const Toolbar: React.FC = () => (
           sx={{
             fontSize: 12,
           }}
-          InputProps={{
-            startAdornment: <Search />,
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </div>
