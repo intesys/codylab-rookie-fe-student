@@ -1,21 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app";
-
-const { worker } = require("./mocks/browser");
-worker.start({
-  onUnhandledRequest(req: any, print: any) {
-    if (req.url.pathname.startsWith("/api/") || req.url.host.startsWith("api.dicebear.com")) {
-      return;
-    }
-
-    print.warning();
-  },
-});
+import { worker } from "./mocks/browser";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+
+worker
+  .start({
+    onUnhandledRequest(request) {
+      const url = new URL(request.url);
+
+      if (!url.pathname.startsWith("/msw/")) {
+        return;
+      }
+
+      console.warn(`[MSW] Unhandled mock request: ${request.method} ${url.pathname}`);
+    },
+  })
+  .then(() => {
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+  });

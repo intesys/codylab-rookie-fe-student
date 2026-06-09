@@ -1,9 +1,9 @@
 import { appointments } from "@mocks/fixtures/appointments";
 import { materials } from "@mocks/fixtures/materials";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 
 export const handlers = [
-  rest.get("/msw/appointmentsByDate", (req, res, ctx) => res(ctx.json(appointments))),
+  http.get("/msw/appointmentsByDate", () => HttpResponse.json(appointments)),
 
-  rest.get("/msw/materials", (req, res, ctx) => res(ctx.json(materials))),
+  http.get("/msw/materials", () => HttpResponse.json(materials)),
 ];
