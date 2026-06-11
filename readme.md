@@ -67,7 +67,6 @@ Per il design applicativo fare riferimento ai file .png salvati nella cartella [
   - Aggiornamento di un paziente
   - Rimozione di un paziente
 - Records (Entity)
-
   - Creazione di un nuovo record legato ad un paziente
   - Cancellazione di un record
   - Lista dei record per paziente
@@ -79,6 +78,14 @@ Per il design applicativo fare riferimento ai file .png salvati nella cartella [
   - Aggiornamento di un dottore
   - Rimozione di un dottore
   - Lista dei pazienti assegnati al dottore
+
+---
+
+## Modulo extra — AI nello sviluppo frontend
+
+Facoltativo, da seguire in autonomia dopo il corso per imparare a usare gli assistenti AI.
+
+**Riferimento:** [`_LEZIONI/05_AI/README.md`](./_LEZIONI/05_AI/README.md)
 
 ---
 
