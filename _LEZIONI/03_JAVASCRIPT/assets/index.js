@@ -36,9 +36,9 @@ Poi usa il destructuring per estrarre firstName e lastName in variabili separate
 
 // Creazione dell'oggetto studente con proprietà e metodo
 const student = {
-  firstName: "Mario",
-  lastName: "Rossi",
-  age: 22,
+  firstName: "Nimeth",
+  lastName: "Mahabaduge",
+  age: 18,
 
   // Metodo per unire nome e cognome usando i backtick
   getFullName() {
