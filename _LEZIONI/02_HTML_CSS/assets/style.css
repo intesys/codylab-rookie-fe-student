@@ -1,1 +1,56 @@
-/* Questo è un commento */
+/* Logo */
+.logo img {
+  width: 50px;
+  height: auto; /*Auto means keeping proporzionale*/
+  display: block; /*Removes extra witespace*/
+}
+
+.header {
+  display: flex; /*Flexbox layout. This pushes the logo to the far left and the navigation menu to the far right*/
+  justify-content: space-between; /*Ensures maximum space between the elements (logo vs. links)*/
+  align-items: center; /*Perfectly centers the logo and text vertically*/
+  padding: 20px 0; /**/
+  border-bottom: 1px solid #eee; /**/
+}
+
+.main-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.main-menu a {
+  text-decoration: none;
+  color: #333;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+}
+
+/*The 6-Box Grid - parent container*/
+.box-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /*Ogni riga è divisa in 3 colonne*/
+  gap: 20px; /*Puts a 20-pixel gap between all the boxes*/
+  padding: 40px 0;
+}
+
+/*Child container*/
+.box-list .box {
+  height: 300px;
+  background-color: #c8c8c8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  margin-top: 40px;
+}
