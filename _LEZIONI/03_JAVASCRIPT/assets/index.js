@@ -116,29 +116,23 @@ console.log(companyName); // Output: Tech Solutions
 4) Per ogni stringa creare un box con il contenuto della stringa appendendolo alla div che contiene la lista dei box
 */
 
-document.addEventListener("DOMContentLoaded", () => {
-  // 1) Creare una costante che contiene una lista di stringhe
-  const listaStringhe = ["Mela", "Arancia", "Pesca", "Ciliegie", "Anguria", "Uva"];
+// 1) Costante che contiene una lista di stringhe
+const listaStringhe = ["Mela", "Arancia", "Pesca", "Ciliegie", "Anguria", "Uva"];
 
-  // 2) Intercettare la div che contiene la lista dei box
-  const contenitoreBox = document.querySelector(".box-list");
+// 2) Intercettare la div che contiene la lista dei box
+const contenitoreBox = document.querySelector(".box-list");
 
-  // Controllo di sicurezza per eseguire il codice solo se la div esiste
-  if (contenitoreBox) {
-    // 3) Creare un ciclo for che cicla la lista di stringhe
-    for (let i = 0; i < listaStringhe.length; i++) {
-      // 4) Per ogni stringa creare un box...
-      const nuovoBox = document.createElement("div");
-      nuovoBox.classList.add("box"); // Applica la classe stile "box"
-
-      // ...con il contenuto della stringa...
-      nuovoBox.innerHTML = `<span>${listaStringhe[i]}</span>`;
-
-      // ...appendendolo alla div che contiene la lista dei box
-      contenitoreBox.appendChild(nuovoBox);
-    }
-
-    // test per vedere se funziona correttamente
-    console.log("I box con i frutti sono stati creati con successo!");
+// Controllo di sicurezza se la div esiste
+if (contenitoreBox) {
+  // 3) Ciclo for che cicla la lista di stringhe
+  for (let i = 0; i < listaStringhe.length; i++) {
+    // 4) Per ogni stringa creare un box...
+    const nuovoBox = document.createElement("div");
+    nuovoBox.classList.add("box"); // Applica classe stile "box"
+    nuovoBox.innerHTML = `<span>${listaStringhe[i]}</span>`; //
+    contenitoreBox.appendChild(nuovoBox);
   }
-});
+
+  // Test di corretto funzionamento
+  console.log("I box con i frutti sono stati creati con successo!");
+}
