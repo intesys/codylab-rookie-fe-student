@@ -26,7 +26,7 @@ const getEvenNumbers = (numbers) => {
   return numbers.filter((number) => number % 2 === 0);
 };
 
-console.log(getEvenNumbers([1, 2, 3, 4, 5, 6, 7, 8])); // Output: [2, 4, 6, 8]
+console.log(getEvenNumbers([1, 2, 3, 4, 5, 6, 7, 8]));
 
 /* Esercizio 2
 Crea un oggetto student con le proprieta' firstName, lastName e age. 
@@ -40,7 +40,7 @@ const student = {
   lastName: "Mahabaduge",
   age: 18,
 
-  // Metodo per unire nome e cognome usando i backtick
+  // Metodo per unire nome e cognome
   getFullName() {
     return `${this.firstName} ${this.lastName}`;
   },
@@ -70,7 +70,7 @@ async function getTodoTitle() {
       throw new Error(`Errore: ${response.status}`); // Gestisce risposte di errore del server
     }
 
-    const todo = await response.json(); // Trasforma la risposta in un oggetto JSON
+    const todo = await response.json();
     console.log("Titolo del todo:", todo.title); // Stampa solo la proprietà 'title'
   } catch (error) {
     console.error("Si è verificato un errore:", error.message); // Cattura errori di rete
