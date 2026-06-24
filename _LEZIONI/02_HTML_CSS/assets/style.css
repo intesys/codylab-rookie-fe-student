@@ -1,1 +1,81 @@
-/* Questo è un commento */
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding: 30px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.main-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.main-menu a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 400;
+  opacity: 0.2s;
+}
+
+.box-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.box {
+  background-color: #cccccc;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box span {
+  font-size: 3rem;
+  font-weight: 900;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 2px solid #e0e0e0;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .box-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
