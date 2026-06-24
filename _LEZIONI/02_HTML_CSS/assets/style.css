@@ -1,1 +1,94 @@
-/* Questo è un commento */
+/* --- Impostazioni di base --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenitore principale per centrare il contenuto e dare dei margini */
+.container {
+  max-width: 1000px; /* Puoi regolare questa larghezza a tuo piacimento */
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  justify-content: space-between; /* Spinge logo a sinistra e menu a destra */
+  align-items: center;
+}
+
+.logo img {
+  width: 40px; /* Regola in base alle dimensioni reali del tuo logo */
+  height: auto;
+  display: block;
+}
+
+.main-menu ul {
+  list-style: none; /* Rimuove i puntini della lista */
+  display: flex;
+  gap: 20px; /* Spazio tra le voci del menu */
+}
+
+.main-menu a {
+  text-decoration: none; /* Rimuove la sottolineatura dai link */
+  color: #000;
+}
+
+/* --- Sezione Principale e Griglia --- */
+.main {
+  flex-grow: 1; /* Fa espandere il main per spingere il footer in basso */
+  padding: 30px 0;
+}
+
+.box-list {
+  text-align: center; /* Centra il gruppo di box nella pagina */
+}
+
+.box {
+  display: inline-flex; /* Allinea i box tra loro e attiva il flex interno */
+  justify-content: center; /* Centra il numero in orizzontale */
+  align-items: center; /* Centra il numero in verticale */
+  width: 31%; /* Larghezza per farne stare 3 per riga su PC */
+  margin: 1%; /* Spazio intorno a ogni box */
+  background-color: #cccccc;
+  aspect-ratio: 4 / 3;
+  vertical-align: top;
+}
+
+.box span {
+  font-size: 40px;
+}
+
+.box-list .linea_sopra {
+  margin-bottom: 30px;
+}
+
+.box-list .linea_sotto {
+  margin-top: 30px;
+}
+
+/* --- Footer --- */
+.footer {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.credits p {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* --- Regole per il Telefono (Dispositivi Mobili) --- */
+@media (max-width: 768px) {
+  .box {
+    display: flex; /* Mantiene la centratura interna del numero */
+    width: 100%; /* Prende tutta la larghezza dello schermo */
+    margin: 15px 0; /* Spazio solo sopra e sotto tra un box e l'altro */
+  }
+}
