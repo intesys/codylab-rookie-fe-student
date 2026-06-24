@@ -108,3 +108,37 @@ const {
 console.log(userName); // Output: Leanne Graham
 console.log(city); // Output: Milano
 console.log(companyName); // Output: Tech Solutions
+
+/*ESERCIZIO 1 della consegna iniziale
+1) Creare una costante che contiene una lista di stringhe
+2) Intercettare la div che contiene la lista dei box
+3) Creare un ciclo for che cicla la lista di stringhe
+4) Per ogni stringa creare un box con il contenuto della stringa appendendolo alla div che contiene la lista dei box
+*/
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1) Creare una costante che contiene una lista di stringhe
+  const listaStringhe = ["Mela", "Arancia", "Pesca", "Ciliegie", "Anguria", "Uva"];
+
+  // 2) Intercettare la div che contiene la lista dei box
+  const contenitoreBox = document.querySelector(".box-list");
+
+  // Controllo di sicurezza per eseguire il codice solo se la div esiste
+  if (contenitoreBox) {
+    // 3) Creare un ciclo for che cicla la lista di stringhe
+    for (let i = 0; i < listaStringhe.length; i++) {
+      // 4) Per ogni stringa creare un box...
+      const nuovoBox = document.createElement("div");
+      nuovoBox.classList.add("box"); // Applica la classe stile "box"
+
+      // ...con il contenuto della stringa...
+      nuovoBox.innerHTML = `<span>${listaStringhe[i]}</span>`;
+
+      // ...appendendolo alla div che contiene la lista dei box
+      contenitoreBox.appendChild(nuovoBox);
+    }
+
+    // test per vedere se funziona correttamente
+    console.log("I box con i frutti sono stati creati con successo!");
+  }
+});
