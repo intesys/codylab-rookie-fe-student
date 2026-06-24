@@ -14,7 +14,7 @@ testo Esercizio 1.b
 
 /* Esercizio 1.b */
 
-const stringhe = ["Ciao", "Mondo", "JavaScript", "Esercizio", "Box", "cucu", "ciaoo"];
+const stringhe = ["Ciao", "Mondo", "JavaScript", "Esercizio", "Box", "cucu", "ciaoo", "miao", "bau"];
 
 const boxListSection = document.querySelector(".box-list");
 
@@ -31,5 +31,18 @@ if (boxListSection) {
     boxListSection.appendChild(nuovoBox);
   }
 }
+
+/* 
+    altra soluzione:
+
+
+const letters = ["a", "b", "c", "d", "e"];
+
+const newBox = document.getElementsByClassName("box-list");
+
+for (const letter of letters) {
+  newBox[0].innerHTML += `<div class="box"><span>${letter}</span></div>`;
+}
+*/
 
 console.log("Hello World");
