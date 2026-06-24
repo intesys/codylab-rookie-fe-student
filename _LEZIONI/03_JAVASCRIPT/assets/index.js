@@ -126,7 +126,7 @@ const contenitoreBox = document.querySelector(".box-list");
 if (contenitoreBox) {
   // 3) Ciclo for che cicla la lista di stringhe
   for (let i = 0; i < listaStringhe.length; i++) {
-    // 4) Per ogni stringa creare un box...
+    // 4) Per ogni stringa creare un box
     const nuovoBox = document.createElement("div");
     nuovoBox.classList.add("box"); // Applica classe stile "box"
     nuovoBox.innerHTML = `<span>${listaStringhe[i]}</span>`; //
@@ -134,5 +134,5 @@ if (contenitoreBox) {
   }
 
   // Test di corretto funzionamento
-  console.log("I box con i frutti sono stati creati con successo!");
+  console.log("I box con i frutti sono stati creati con correttamente!");
 }
