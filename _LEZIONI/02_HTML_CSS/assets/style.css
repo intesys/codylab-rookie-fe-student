@@ -1,1 +1,106 @@
-/* Questo è un commento */
+/* configurazione generale */
+body {
+  font-family: "arial", sans-serif;
+  background: white;
+  color: black;
+}
+/*header della pagina*/
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid black;
+}
+/*container che racchiude tutta la oagina*/
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+/*dimensione del logo*/
+.header .logo img {
+  height: 80px;
+  display: block;
+}
+/*menù di navigazione*/
+.main-menu ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.main-menu ul li a {
+  text-decoration: none;
+  color: black;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+/*menu centrale*/
+.main {
+  padding: 50px 0;
+}
+
+.box-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+/*stile dei rettangoli*/
+.box {
+  background: rgb(158, 155, 155);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1.2/1;
+}
+
+/*stile dei numeri dentro i quadratri grigi*/
+.box span {
+  font-size: 70px;
+  font-weight: bold;
+  color: black;
+}
+/*footer della pagina*/
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 2px solid #000000;
+}
+/*dimensione del logo del footer*/
+.footer .logo img {
+  height: 45px;
+  display: block;
+}
+
+.credits p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+}
+
+/*verione mobile*/
+@media (max-width: 768px) {
+  /*mostra solo un quadrato grigio per riga*/
+  .box-list {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+  }
+
+  /* rimpicciolisce le critte per adattarle alla verione mobile */
+  .main-menu ul li a {
+    font-size: 16px;
+  }
+
+  .main-menu ul {
+    gap: 15px;
+  }
+
+  /* adatta i numeri presenti all'interno dei quadrati alla versione mobile */
+  .box span {
+    font-size: 48px;
+  }
+}
