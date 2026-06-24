@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
   <head>
     <!-- MetaTag -->
@@ -54,5 +54,35 @@
       </footer>
     </div>
     <script src="./assets/index.js" type="text/javascript"></script>
+  </body>
+</html>
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Manipolazione DOM</title>
+
+    <style>
+      #testo {
+        font-size: 18px;
+        transition: color 0.3s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button id="btn">Cambia colore</button>
+
+    <p id="testo">La vita è bella.</p>
+
+    <script>
+      const bottone = document.getElementById("btn");
+      const paragrafo = document.getElementById("testo");
+
+      bottone.addEventListener("click", function () {
+        paragrafo.style.color = "blue";
+      });
+    </script>
   </body>
 </html>
