@@ -1,0 +1,64 @@
+<!-- Esercizio 3 - Manipolazione del DOM Crea una pagina HTML con un bottone e un paragrafo. Quando l'utente clicca il
+bottone, il testo del paragrafo deve cambiare e il colore deve diventare blu. -->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Esercizio DOM</title>
+  </head>
+  <body>
+    <p id="testo">Se clicchi il bottone, il testo cambierà!</p>
+
+    <button onclick="cambiaTesto()">Cliccami!</button>
+
+    <script>
+      function cambiaTesto() {
+        document.getElementById("testo").textContent = "Il testo è cambiato!";
+        document.getElementById("testo").style.color = "blue";
+      }
+    </script>
+  </body>
+</html>
+
+<!--
+Esercizio 1
+
+1) Creare una costante che contiene una lista di strighe
+2) Intercettare la div che contiene la lista dei box
+3) Creare un ciclo for che cicla la lista di stringhe
+4) Per ogni stringa creare un box con il contenuto della stringa appendendolo alla div che contiente la lista dei box -->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Esercizio 1</title>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script>
+      // 1. Lista di stringhe
+      const listaStringhe = ["Ciao", "Mela", "Pera", "Banana"];
+
+      // 2. Intercetto la div
+      const container = document.getElementById("container");
+
+      // 3. Ciclo la lista
+      for (let i = 0; i < listaStringhe.length; i++) {
+        // 4. Creo un box
+        const box = document.createElement("div");
+
+        // Inserisco il testo
+        box.textContent = listaStringhe[i];
+
+        // Stile del box
+        box.style.border = "1px solid black";
+        box.style.padding = "10px";
+        box.style.margin = "5px";
+
+        // Aggiungo il box alla div container
+        container.appendChild(box);
+      }
+    </script>
+  </body>
+</html>
