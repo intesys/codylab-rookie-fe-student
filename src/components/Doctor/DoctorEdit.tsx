@@ -10,7 +10,6 @@ import { Link, useNavigate } from "react-router-dom";
 const DoctorEdit: React.FC = () => {
   const navigate = useNavigate();
 
-  // Stato iniziale popolato con i dati del dottore
   const [form, setForm] = useState({
     name: "Filippo",
     surname: "Dolci",
@@ -26,7 +25,6 @@ const DoctorEdit: React.FC = () => {
 
   return (
     <div>
-      {/* Breadcrumb fisso basato sulla struttura del tutor */}
       <Breadcrumb>
         <BreadcrumbEl>
           <Link to={getPath(DOCTORS_PATH)}>Home</Link>
@@ -36,12 +34,10 @@ const DoctorEdit: React.FC = () => {
         </BreadcrumbEl>
         <BreadcrumbEl active>Edit</BreadcrumbEl>
       </Breadcrumb>
-
       <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: 700, color: "#333", fontSize: "1.15rem" }}>
         EDIT DOCTOR
       </Typography>
-
-      {/* Card contenitore del Form */}
+      //Card contenitore del Form
       <Card
         sx={{
           p: "32px 24px",
@@ -52,7 +48,7 @@ const DoctorEdit: React.FC = () => {
         }}
       >
         <Grid container spacing={3}>
-          {/* Campo Nome */}
+          //Campo Nome
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Name *"
@@ -65,8 +61,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Campo Cognome */}
+          //Campo Cognome
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Surname *"
@@ -79,8 +74,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Campo Professione */}
+          //Campo Professione
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Profession *"
@@ -93,8 +87,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Campo Email */}
+          //Campo Email
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Email *"
@@ -107,8 +100,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Campo Numero di Telefono */}
+          //Campo Numero di Telefono
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Phone number *"
@@ -121,8 +113,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Barra dei Bottoni inferiore */}
+          //Barra dei Bottoni inferiore
           <Grid size={{ xs: 12 }}>
             <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
               {/* Bottone SAVE Rosso */}
@@ -145,8 +136,7 @@ const DoctorEdit: React.FC = () => {
               >
                 Save
               </Button>
-
-              {/* Bottone BACK Bianco con bordo rosso */}
+              // Bottone BACK Bianco con bordo rosso
               <Button
                 variant="outlined"
                 onClick={() => navigate(-1)}
