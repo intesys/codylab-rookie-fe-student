@@ -2,7 +2,6 @@ import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { DOCTORS_PATH } from "@config/paths";
 import { getPath } from "@lib/utils";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
@@ -23,115 +22,150 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Doctor: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [data, setData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const doctor = {
+    name: "Filippo",
+    surname: "Dolci",
+    specialty: "chirurgo",
+    phone: "3490011222",
+    email: "email.chenonghe1@gmail.com",
+  };
 
-  React.useEffect(() => {
-    fetch(`/api/doctors/${id || "filippo-dolci"}`)
-      .then((res) => res.json())
-      .then((resData) => {
-        setData(resData);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id]);
+  const lastVisitedPatients = [
+    { pid: 4, name: "Enrico", surname: "Costanzi", color: "#666" },
+    { pid: 3, name: "Carlo", surname: "Marchiori", color: "#0059B2" },
+  ];
 
-  if (loading)
-    return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Loading...</Typography>
-      </Box>
-    );
-  if (!data)
-    return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Doctor not found</Typography>
-      </Box>
-    );
+  const allPatients = [
+    { pid: 3, opd: "1222", idp: "32322", name: "Carlo", surname: "Marchiori" },
+    { pid: 4, opd: "5232", idp: "3211", name: "Enrico", surname: "Costanzi" },
+  ];
 
-  const { doctor, lastVisitedPatients, allPatients } = data;
   return (
     <div>
       <Breadcrumb>
-        <BreadcrumbEl active>
-          {doctor?.name} {doctor?.surname}
+        <BreadcrumbEl>
+          <Link to={getPath(DOCTORS_PATH)}>Doctors</Link>
         </BreadcrumbEl>
-        <Link to={getPath(DOCTORS_PATH)}>Doctors</Link>
-        <BreadcrumbEl active>{/* Doctor name and surname */}</BreadcrumbEl>
+        {/* Gestione dinamica del nome all'interno del Breadcrumb originale */}
+        <BreadcrumbEl active>
+          {doctor.name} {doctor.surname}
+        </BreadcrumbEl>
       </Breadcrumb>
-      <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: "bold", color: "#333" }}>
+
+      {/* --- AGGIUNTA STRUTTURA GRAFICA COMPLETA --- */}
+      <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: 700, color: "#333", fontSize: "1.15rem" }}>
         DOCTOR DETAILS
       </Typography>
 
-      {/* Card Profilo Medico */}
+      {/* Card Superiore Profilo Medico */}
       <Card
         sx={{
-          p: 3,
+          p: "20px 24px",
           display: "flex",
           alignItems: "center",
           gap: 3,
           mb: 4,
           borderRadius: "4px",
-          boxShadow: "none",
-          border: "1px solid #E0E0E0",
+          boxShadow: "0px 1px 3px rgba(0,0,0,0.04)",
+          border: "1px solid #E6E6E6",
+          backgroundColor: "#FFF",
         }}
       >
-        <Avatar sx={{ bgcolor: "#004C99", width: 64, height: 64 }}>
-          <AccountCircleIcon sx={{ fontSize: 45 }} />
+        <Avatar
+          sx={{
+            bgcolor: "#0059B2",
+            width: 60,
+            height: 60,
+            fontSize: "1.8rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          🤖
         </Avatar>
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              {doctor?.name} {doctor?.surname}
+            <Typography variant="h5" sx={{ fontWeight: 500, color: "#333", fontSize: "1.6rem" }}>
+              {doctor.name}{" "}
+              <Box component="span" sx={{ fontWeight: 700 }}>
+                {doctor.surname}
+              </Box>
             </Typography>
-            <IconButton size="small" sx={{ color: "#E31B23" }}>
+            <IconButton size="small" sx={{ color: "#E31B23", ml: 0.5, p: 0 }}>
               <EditIcon fontSize="small" />
             </IconButton>
           </Box>
-          <Typography variant="body2" sx={{ color: "#777", fontStyle: "italic", mt: 0.5 }}>
-            {doctor?.specialty}
+          <Typography variant="body2" sx={{ color: "#666", fontStyle: "italic", mt: 0.5, fontSize: "0.85rem" }}>
+            {doctor.specialty}
           </Typography>
         </Box>
       </Card>
 
-      {/* Griglia a due colonne (Sidebar + Tabella) */}
-      <Grid container spacing={4}>
-        {/* Sidebar Contatti */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box sx={{ bgcolor: "#3F4142", color: "#FFF", p: 3, borderRadius: "4px" }}>
+      {/* Layout Principale a Due Colonne */}
+      <Grid container spacing={3}>
+        {/* Sidebar Grigio Scuro (Contatti e Ultimi Visitati) */}
+        <Grid size={{ xs: 12, md: 3.8 }}>
+          <Box sx={{ bgcolor: "#3F4142", color: "#FFF", p: 3, borderRadius: "4px", minHeight: "340px" }}>
+            {/* Sezione CONTATTI */}
             <Typography
               variant="caption"
-              sx={{ display: "block", letterSpacing: "1px", fontWeight: "bold", mb: 2, color: "#AAA" }}
+              sx={{
+                display: "block",
+                letterSpacing: "0.8px",
+                fontWeight: 700,
+                mb: 2.5,
+                color: "#9A9A9A",
+                fontSize: "0.75rem",
+              }}
             >
               CONTACTS
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-              <PhoneIcon sx={{ color: "#E31B23", fontSize: "1.2rem" }} />
-              <Typography variant="body2">{doctor?.phone}</Typography>
+              <PhoneIcon sx={{ color: "#E31B23", fontSize: "1.1rem" }} />
+              <Typography variant="body2" sx={{ color: "#EAEAEA", fontSize: "0.85rem" }}>
+                {doctor.phone}
+              </Typography>
             </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-              <EmailIcon sx={{ color: "#E31B23", fontSize: "1.2rem" }} />
-              <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-                {doctor?.email}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4.5 }}>
+              <EmailIcon sx={{ color: "#E31B23", fontSize: "1.1rem" }} />
+              <Typography variant="body2" sx={{ color: "#EAEAEA", fontSize: "0.85rem", wordBreak: "break-all" }}>
+                {doctor.email}
               </Typography>
             </Box>
 
+            {/* Sezione ULTIMI VISITATI */}
             <Typography
               variant="caption"
-              sx={{ display: "block", letterSpacing: "1px", fontWeight: "bold", mb: 2, color: "#AAA" }}
+              sx={{
+                display: "block",
+                letterSpacing: "0.8px",
+                fontWeight: 700,
+                mb: 2.5,
+                color: "#9A9A9A",
+                fontSize: "0.75rem",
+              }}
             >
               LAST VISITED PATIENTS
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {lastVisitedPatients?.map((patient: any) => (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              {lastVisitedPatients.map((patient) => (
                 <Box key={patient.pid} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Avatar sx={{ width: 28, height: 28, bgcolor: "#555" }} />
-                  <Typography variant="body2">
-                    {patient.name} {patient.surname}
+                  <Avatar sx={{ width: 28, height: 28, bgcolor: patient.color, fontSize: "0.75rem" }}>👤</Avatar>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "#FFF", fontSize: "0.85rem", fontWeight: 500, lineHeight: 1.2 }}
+                  >
+                    {patient.name}
+                    <Box
+                      component="span"
+                      sx={{ display: "block", fontWeight: 400, color: "#B0B0B0", fontSize: "0.8rem" }}
+                    >
+                      {patient.surname}
+                    </Box>
                   </Typography>
                 </Box>
               ))}
@@ -139,38 +173,102 @@ const Doctor: React.FC = () => {
           </Box>
         </Grid>
 
-        {/* Tabella Pazienti */}
-        <Grid size={{ xs: 12, md: 8 }}>
+        {/* Tabella Bianca Pazienti */}
+        <Grid size={{ xs: 12, md: 8.2 }}>
           <TableContainer
             component={Paper}
-            sx={{ p: 3, borderRadius: "4px", boxShadow: "none", border: "1px solid #E0E0E0" }}
+            sx={{
+              p: "20px 24px",
+              borderRadius: "4px",
+              boxShadow: "0px 1px 3px rgba(0,0,0,0.04)",
+              border: "1px solid #E6E6E6",
+            }}
           >
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 700, color: "#333", fontSize: "1.05rem" }}>
               Patients
             </Typography>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold", color: "#888" }}>PID</TableCell>
-                  <TableCell sx={{ fontWeight: "bold", color: "#888" }}>OPD</TableCell>
-                  <TableCell sx={{ fontWeight: "bold", color: "#888" }}>IDP</TableCell>
-                  <TableCell sx={{ fontWeight: "bold", color: "#888" }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: "bold", color: "#888" }}>Surname</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: "bold", color: "#888" }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
+                    PID
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
+                    OPD
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
+                    IDP
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
+                    Surname
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      fontWeight: 700,
+                      color: "#999",
+                      borderBottom: "1px solid #F0F0F0",
+                      fontSize: "0.75rem",
+                      px: 1,
+                    }}
+                  >
                     Actions
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {allPatients?.map((patient: any) => (
-                  <TableRow key={patient.pid}>
-                    <TableCell>{patient.pid}</TableCell>
-                    <TableCell>{patient.opd}</TableCell>
-                    <TableCell>{patient.idp}</TableCell>
-                    <TableCell>{patient.name}</TableCell>
-                    <TableCell>{patient.surname}</TableCell>
-                    <TableCell align="right">
-                      <IconButton size="small">
+                {allPatients.map((patient) => (
+                  <TableRow key={patient.pid} sx={{ "&:last-child td": { border: 0 } }}>
+                    <TableCell sx={{ py: 2, px: 1, color: "#444", fontSize: "0.85rem" }}>{patient.pid}</TableCell>
+                    <TableCell sx={{ py: 2, px: 1, color: "#444", fontSize: "0.85rem" }}>{patient.opd}</TableCell>
+                    <TableCell sx={{ py: 2, px: 1, color: "#444", fontSize: "0.85rem" }}>{patient.idp}</TableCell>
+                    <TableCell sx={{ py: 2, px: 1, color: "#444", fontSize: "0.85rem" }}>{patient.name}</TableCell>
+                    <TableCell sx={{ py: 2, px: 1, color: "#444", fontSize: "0.85rem" }}>{patient.surname}</TableCell>
+                    <TableCell align="right" sx={{ py: 1, px: 1 }}>
+                      <IconButton size="small" sx={{ color: "#555" }}>
                         <ChevronRightIcon />
                       </IconButton>
                     </TableCell>
