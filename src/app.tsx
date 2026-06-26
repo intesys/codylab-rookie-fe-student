@@ -1,7 +1,7 @@
 import Layout from "@components/Layout/Layout";
 import { customTheme } from "@config/themeStyle";
 import { MaterialProvider } from "@context/MaterialProvider";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { SnackbarProvider } from "notistack";
