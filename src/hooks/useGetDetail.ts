@@ -22,7 +22,7 @@ export function useGetDetail<T extends object>(
       .finally(() => {
         setLoading(false);
       });
-  }, [getDetailApi, newRecord, setLoading, setRecord]);
+  }, [getDetailApi, newRecord, id, setLoading, setRecord]);
 
   useEffect(getDetail, [getDetail]);
 
