@@ -12,7 +12,7 @@ const Home: React.FC = () => {
         <Typography variant="h5">
           Welcome{" "}
           <Typography variant="h5" color="primary" component="span">
-            Mario Rossi
+            Samuele Bortolotti
           </Typography>
         </Typography>
       </Box>

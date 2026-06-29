@@ -10,5 +10,7 @@ export const doctorsFilterReducer: Reducer<DoctorFilterDTO, Action> = (state, ac
   switch (action.type) {
     case "SET_FILTER":
       return action.payload || state;
+    default:
+      return state;
   }
 };
