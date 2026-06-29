@@ -15,6 +15,26 @@ export const patients: PatientDTO[] = [
     notes: "",
     lastAdmission: "2023-05-22",
     lastDoctorVisitedId: 1,
+    patientRecords: [
+      {
+        id: 1,
+        patientId: 3,
+        date: "22.05.2023",
+        typeVisit: "",
+        reasonVisit: "Dotor, no la me pasa più",
+        treatmentMade: "",
+        doctor: { id: 2, name: "Alessandro", surname: "Falezza" },
+      },
+      {
+        id: 2,
+        patientId: 3,
+        date: "21.05.2023",
+        typeVisit: "",
+        reasonVisit: "Dotor, sto mal n'altra olta",
+        treatmentMade: "",
+        doctor: { id: 1, name: "Filippo", surname: "Dolci" },
+      },
+    ],
   },
   {
     id: 4,
@@ -30,6 +50,7 @@ export const patients: PatientDTO[] = [
     notes: "",
     lastAdmission: "2023-05-21",
     lastDoctorVisitedId: 1,
+    patientRecords: [],
   },
   {
     id: 5,
@@ -45,5 +66,6 @@ export const patients: PatientDTO[] = [
     notes: "",
     lastAdmission: "2023-05-20",
     lastDoctorVisitedId: 2,
+    patientRecords: [],
   },
 ];

@@ -1,7 +1,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { PatientsFilterContext } from "./index";
+import { PatientsFilterContext } from "./context";
 
 const PatientFilterForm: React.FC = () => {
   const { filter, dispatch } = useContext(PatientsFilterContext);

@@ -5,20 +5,12 @@ import { PatientApiApi, PatientDTO, PatientFilterDTO } from "@generated/axios";
 import useGetList from "@hooks/useGetList";
 import { getNewDetailPath } from "@lib/utils";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import React, { Dispatch, useMemo, useReducer } from "react";
+import React, { useMemo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { Action, patientsFilterReducer } from "./lib";
+import { PatientsFilterContext } from "./context";
+import { patientsFilterReducer } from "./lib";
 import PatientCard from "./PatientCard";
 import PatientFilterForm from "./PatientFilterForm";
-interface IPatientsFilterContext {
-  filter: PatientFilterDTO;
-  dispatch: Dispatch<Action>;
-}
-
-export const PatientsFilterContext: React.Context<IPatientsFilterContext> = React.createContext({
-  filter: {},
-  dispatch: (action: Action) => {},
-});
 
 const api = new PatientApiApi();
 
