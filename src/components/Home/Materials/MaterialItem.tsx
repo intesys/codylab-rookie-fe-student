@@ -1,4 +1,4 @@
-import { IMaterialItem } from "@components/Home/Materials/Types";
+import { IMaterialItem } from "@components/Home/Materials/types";
 import { Button, Grid } from "@mui/material";
 import React from "react";
 

@@ -48,3 +48,4 @@ export const useDate: IUseDate = initialDate => {
   };
 
   return [date, setDate, prevMonth, nextMonth];
+};

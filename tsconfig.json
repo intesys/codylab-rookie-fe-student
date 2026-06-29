@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./src",
     "outDir": "dist",
     "module": "esnext",
     "target": "es5",
-    "lib": ["es5", "es6", "es7", "es2017", "dom", "es2015.promise"],
+    "lib": ["es5", "es6", "es7", "es2017", "es2018", "dom", "es2015.promise"],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react-jsx",
@@ -20,6 +21,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
+    "types": ["node"],
     "esModuleInterop": true,
     "importHelpers": true,
     "paths": {

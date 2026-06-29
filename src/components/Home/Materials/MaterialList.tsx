@@ -1,5 +1,5 @@
 import MaterialItem from "@components/Home/Materials/MaterialItem";
-import { IMaterialItem } from "@components/Home/Materials/Types";
+import { IMaterialItem } from "@components/Home/Materials/types";
 import { MaterialContext } from "@context/MaterialProvider";
 import { Button, Tab, Tabs } from "@mui/material";
 import React, { useContext, useState } from "react";

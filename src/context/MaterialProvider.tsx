@@ -1,4 +1,4 @@
-import { IMaterialList } from "@components/Home/Materials/Types";
+import { IMaterialList } from "@components/Home/Materials/types";
 import { basePathSW } from "@config/api";
 import React, { useEffect, useState } from "react";
 

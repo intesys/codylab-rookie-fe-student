@@ -1,7 +1,8 @@
 import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { PATIENTS_PATH } from "@config/paths";
-import { PatientApiApi, PatientDTO, PatientFilterDTO } from "@generated/axios";
+import { api } from "@config/api";
+import { PatientDTO, PatientFilterDTO } from "@generated/axios";
 import useGetList from "@hooks/useGetList";
 import { getNewDetailPath } from "@lib/utils";
 import { Box, Button, Grid, Typography } from "@mui/material";
@@ -20,14 +21,12 @@ export const PatientsFilterContext: React.Context<IPatientsFilterContext> = Reac
   dispatch: (action: Action) => {},
 });
 
-const api = new PatientApiApi();
-
 const Patients: React.FC = () => {
   const [filter, dispatch] = useReducer(patientsFilterReducer, {});
   const patientContextValue = useMemo(() => ({ filter, dispatch }), [filter, dispatch]);
   const navigate = useNavigate();
 
-  const [patients, loading] = useGetList<PatientDTO, PatientFilterDTO>(api.getListPatient.bind(api), filter);
+  const [patients, loading] = useGetList<PatientDTO, PatientFilterDTO>(api.patients.getListPatient, filter);
 
   return (
     <PatientsFilterContext.Provider value={patientContextValue}>
