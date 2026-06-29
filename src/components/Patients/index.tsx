@@ -8,7 +8,7 @@ interface IPatientsFilterContext {
   filter: PatientFilterDTO;
   dispatch: Dispatch<Action>;
 }
-+
+
 export const PatientsFilterContext: React.Context<IPatientsFilterContext> = React.createContext({
   filter: {},
   dispatch: (action) => {},
