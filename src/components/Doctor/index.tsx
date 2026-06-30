@@ -24,8 +24,7 @@ const Doctor: React.FC = () => {
 
   if (loading) return <Typography>Loading...</Typography>;
 
-  // Castiamo temporaneamente a any solo l'array dei pazienti se TypeScript fa storie sul tipo generico del DTO
-  const assignedPatients = (doctor as any).patients ?? [];
+  const assignedPatients = doctor.latestPatients ?? [];
 
   return (
     <div>
@@ -73,9 +72,7 @@ const Doctor: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Body diviso: Sidebar sinistra e Tabella destra */}
       <Box sx={{ display: "flex", gap: 2 }}>
-        {/* Sidebar contatti (Colore scuro come da foto) */}
         <Box sx={{ bgcolor: "#424242", color: "white", p: 3, borderRadius: 1, minWidth: 280, maxWidth: 280 }}>
           <Typography variant="overline" sx={{ color: "#ef9a9a", fontWeight: "bold" }}>
             CONTACTS
@@ -99,7 +96,6 @@ const Doctor: React.FC = () => {
             LAST VISITED PATIENTS
           </Typography>
 
-          {/* Mostriamo un'anteprima dei primi pazienti nei contatti */}
           {assignedPatients.slice(0, 2).map((p: any) => (
             <Box key={p.id} sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
               <img
@@ -114,7 +110,6 @@ const Doctor: React.FC = () => {
           ))}
         </Box>
 
-        {/* Tabella dei pazienti assegnati */}
         <Box sx={{ flex: 1, bgcolor: "white", p: 3, borderRadius: 1, border: "1px solid #e0e0e0" }}>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
             Patients

@@ -1,6 +1,8 @@
 import Billing from "@components/Billing";
 import Doctor from "@components/Doctor";
 import Doctors from "@components/Doctors";
+import DoctorEdit from "@components/Doctors/DoctorEdit";
+import DoctorNew from "@components/Doctors/DoctorNew";
 import Home from "@components/Home";
 import News from "@components/News";
 import Patient from "@components/Patient";
@@ -40,8 +42,8 @@ const AppRoutes: React.FC = () => {
         <Route path={DOCTORS_PATH}>
           <Route index element={<Doctors />} />
           <Route path=":id" element={<Doctor />} />
-          {/* <Route path=":id/edit" element={<DoctorEdit />} />
-          <Route path="new" element={<DoctorNew />} /> */}
+          <Route path="new" element={<DoctorNew />} />
+          <Route path=":id/edit" element={<DoctorEdit />} />
         </Route>
         <Route path={PHARMACY_PATH} element={<Pharmacy />} />
         <Route path={WARD_PATH} element={<Ward />} />

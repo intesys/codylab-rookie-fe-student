@@ -1,22 +1,21 @@
 import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
-import { api } from "@config/api";
 import { DOCTORS_PATH } from "@config/paths";
-import { DoctorDTO } from "@generated/axios";
+import { DoctorApiApi, DoctorDTO } from "@generated/axios";
 import { getPath } from "@lib/utils";
 import { Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DoctorForm from "./DoctorForm";
 
-const createDoctorApi = api.doctors.createDoctor;
+const api = new DoctorApiApi();
 
 const DoctorNew: React.FC = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState<DoctorDTO>({});
 
   const handleSave = () => {
-    createDoctorApi(doctor).then(() => {
+    api.createDoctor(doctor).then(() => {
       navigate(getPath(DOCTORS_PATH));
     });
   };
