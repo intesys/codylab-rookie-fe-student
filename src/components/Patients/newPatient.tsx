@@ -1,260 +1,165 @@
 import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
-import React, { useState } from "react";
+import { api } from "@config/api";
+import { PATIENTS_PATH } from "@config/paths";
+import { PatientDTO, PatientDTOBloodGroupEnum } from "@generated/axios";
+import useGetDetail from "@hooks/useGetDetail";
+import { getBloodType, getDetailPath, getPath } from "@lib/utils";
+import SaveIcon from "@mui/icons-material/Save";
+import { Box, Button, MenuItem, Switch, TextField, Typography } from "@mui/material";
+import { useSnackbar } from "notistack";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-// Esportiamo l'interfaccia IFormState così può essere usata anche nel componente padre
-export interface IFormState {
-  name: string;
-  surname: string;
-  address: string;
-  opd: string;
-  idp: string;
-  bloodGroup: string;
-  isChronic: boolean;
-  notes: string;
-}
+const EMPTY_PATIENT: PatientDTO = {};
+const BLOOD_GROUPS = Object.values(PatientDTOBloodGroupEnum);
 
-interface INewPatientProps {
-  onBack: () => void;
-  // Nuova prop: passiamo una funzione asincrona che gestisce il salvataggio
-  onSave: (data: IFormState) => Promise<void>;
-}
+const NewPatient: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const isEdit = Boolean(id);
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [patient, setPatient] = useState<PatientDTO>({});
 
-const NewPatient: React.FC<INewPatientProps> = ({ onBack, onSave }) => {
-  const [formData, setFormData] = useState<IFormState>({
-    name: "",
-    surname: "",
-    address: "",
-    opd: "",
-    idp: "",
-    bloodGroup: "",
-    isChronic: false,
-    notes: "",
-  });
+  const [fetchedRecord, loading] = useGetDetail<PatientDTO>(
+    isEdit ? api.patients.getPatient : async () => ({ data: EMPTY_PATIENT }),
+    EMPTY_PATIENT,
+    Number(id)
+  );
 
-  const [isSaving, setIsSaving] = useState(false);
+  useEffect(() => {
+    if (isEdit && fetchedRecord) setPatient(fetchedRecord);
+  }, [fetchedRecord, isEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const setField = (field: keyof PatientDTO, value: unknown) => setPatient({ ...patient, [field]: value });
+  const handleNumberChange = (field: keyof PatientDTO, val: string) => setField(field, val === "" ? null : Number(val));
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, isChronic: e.target.checked }));
-  };
-
-  // Resa asincrona: ora attende che il padre finisca il salvataggio
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
-    try {
-      await onSave(formData);
-      // Non richiamiamo onBack() qui, lo facciamo dal padre dopo il successo
-    } catch (error) {
-      console.error("Errore durante il salvataggio nel form", error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-  const inputStyle = {
-    width: "100%",
-    padding: "12px 14px",
-    border: "1px solid #d1d5db",
-    borderRadius: "4px",
-    fontSize: "0.9rem",
-    boxSizing: "border-box" as const,
+    const apiCall = isEdit ? api.patients.updatePatient(Number(id), patient) : api.patients.createPatient(patient);
+
+    apiCall
+      .then((res) => {
+        enqueueSnackbar(`Patient ${isEdit ? "updated" : "created"} successfully`, { variant: "success" });
+        const targetId = isEdit ? id : res?.data?.id;
+        navigate(targetId ? getDetailPath(PATIENTS_PATH, targetId) : getPath(PATIENTS_PATH));
+      })
+      .catch((err) => enqueueSnackbar(`Error: ${err.message}`, { variant: "error" }))
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
-    <div>
+    <Box sx={{ pointerEvents: isSubmitting ? "none" : "auto", opacity: isSubmitting ? 0.7 : 1 }}>
       <Breadcrumb>
-        <BreadcrumbEl>Patients</BreadcrumbEl>
-        <BreadcrumbEl active>New</BreadcrumbEl>
+        <BreadcrumbEl>
+          <Link to={getPath(PATIENTS_PATH)}>Patients</Link>
+        </BreadcrumbEl>
+        <BreadcrumbEl active>{isEdit ? "Edit" : "New"}</BreadcrumbEl>
       </Breadcrumb>
 
-      <h2 style={{ marginBottom: "20px", marginTop: "10px", fontWeight: "bold", fontSize: "1.25rem" }}>NEW PATIENT</h2>
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+        {isEdit ? "EDIT PATIENT" : "NEW PATIENT"}
+      </Typography>
 
-      <form
-        onSubmit={handleSave}
-        style={{
-          backgroundColor: "white",
-          padding: "30px",
-          borderRadius: "5px",
-          border: "1px solid #e5e7eb",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "16px",
-            marginBottom: "20px",
+      {isEdit && loading ? (
+        <Typography>Loading patient details...</Typography>
+      ) : (
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            bgcolor: "white",
+            p: 3,
+            borderRadius: 1,
+            border: "1px solid #e0e0e0",
           }}
         >
-          <input
-            type="text"
-            name="name"
-            placeholder="Name *"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="surname"
-            placeholder="Surname *"
-            required
-            value={formData.surname}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Address *"
-            required
-            value={formData.address}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "16px",
-            marginBottom: "25px",
-          }}
-        >
-          <input
-            type="text"
-            name="opd"
-            placeholder="OPD *"
-            required
-            value={formData.opd}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <input
-            type="text"
-            name="idp"
-            placeholder="IDP *"
-            required
-            value={formData.idp}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-          <select
-            name="bloodGroup"
-            required
-            value={formData.bloodGroup}
-            onChange={handleChange}
-            style={{ ...inputStyle, backgroundColor: "white", color: formData.bloodGroup ? "#000" : "#9ca3af" }}
-          >
-            <option value="" disabled hidden>
-              Blood Group *
-            </option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "25px" }}>
-          <label
-            style={{ position: "relative", display: "inline-block", width: "44px", height: "22px", cursor: "pointer" }}
-          >
-            <input
-              type="checkbox"
-              checked={formData.isChronic}
-              onChange={handleCheckboxChange}
-              style={{ opacity: 0, width: 0, height: 0 }}
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2 }}>
+            <TextField
+              label="Name"
+              required
+              value={patient.name ?? ""}
+              onChange={(e) => setField("name", e.target.value)}
             />
-            <span
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: formData.isChronic ? "red" : "#ccc",
-                borderRadius: "34px",
-                transition: "0.3s",
-              }}
+            <TextField
+              label="Surname"
+              required
+              value={patient.surname ?? ""}
+              onChange={(e) => setField("surname", e.target.value)}
             />
-            <span
-              style={{
-                position: "absolute",
-                height: "16px",
-                width: "16px",
-                left: formData.isChronic ? "24px" : "4px",
-                bottom: "3px",
-                backgroundColor: "white",
-                borderRadius: "50%",
-                transition: "0.3s",
-              }}
+            <TextField
+              label="Address"
+              required
+              value={patient.address ?? ""}
+              onChange={(e) => setField("address", e.target.value)}
             />
-          </label>
-          <span style={{ fontSize: "0.9rem", color: "#4b5563" }}>Chronic patient</span>
-        </div>
+          </Box>
 
-        <div style={{ marginBottom: "30px" }}>
-          <textarea
-            name="notes"
-            placeholder="Notes"
-            rows={5}
-            value={formData.notes}
-            onChange={handleChange}
-            style={{ ...inputStyle, resize: "vertical" }}
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2 }}>
+            <TextField
+              label="OPD"
+              type="number"
+              required
+              value={patient.opd ?? ""}
+              onChange={(e) => handleNumberChange("opd", e.target.value)}
+            />
+            <TextField
+              label="IDP"
+              type="number"
+              required
+              value={patient.idp ?? ""}
+              onChange={(e) => handleNumberChange("idp", e.target.value)}
+            />
+            <TextField
+              label="Blood Group"
+              select
+              required
+              value={patient.bloodGroup ?? ""}
+              onChange={(e) => setField("bloodGroup", e.target.value)}
+            >
+              {BLOOD_GROUPS.map((bg) => (
+                <MenuItem key={bg} value={bg}>
+                  {getBloodType(bg)}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Switch
+              checked={patient.chronicPatient ?? false}
+              onChange={(e) => setField("chronicPatient", e.target.checked)}
+              color="primary"
+            />
+            <Typography variant="body2">Chronic patient</Typography>
+          </Box>
+
+          <TextField
+            label="Notes"
+            multiline
+            rows={3}
+            value={patient.notes ?? ""}
+            onChange={(e) => setField("notes", e.target.value)}
           />
-        </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
-          <button
-            type="submit"
-            disabled={isSaving}
-            style={{
-              backgroundColor: isSaving ? "#fca5a5" : "red",
-              color: "white",
-              border: "none",
-              padding: "10px 24px",
-              fontWeight: "600",
-              fontSize: "0.85rem",
-              cursor: isSaving ? "not-allowed" : "pointer",
-              borderRadius: "4px",
-            }}
-          >
-            {isSaving ? "SAVING..." : "SAVE"}
-          </button>
-          <button
-            type="button"
-            onClick={onBack}
-            disabled={isSaving}
-            style={{
-              backgroundColor: "white",
-              color: "red",
-              border: "1px solid red",
-              padding: "10px 24px",
-              fontWeight: "600",
-              fontSize: "0.85rem",
-              cursor: isSaving ? "not-allowed" : "pointer",
-              borderRadius: "4px",
-            }}
-          >
-            BACK
-          </button>
-        </div>
-      </form>
-    </div>
+          <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+            <Button variant="contained" color="primary" type="submit" startIcon={<SaveIcon />}>
+              SAVE
+            </Button>
+            <Button variant="outlined" type="button" onClick={() => navigate(getPath(PATIENTS_PATH))}>
+              BACK
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </Box>
   );
 };
 
