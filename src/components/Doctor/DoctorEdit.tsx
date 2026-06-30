@@ -37,7 +37,7 @@ const DoctorEdit: React.FC = () => {
       <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: 700, color: "#333", fontSize: "1.15rem" }}>
         EDIT DOCTOR
       </Typography>
-      //Card contenitore del Form
+      Informazioni del dottore
       <Card
         sx={{
           p: "32px 24px",
@@ -48,7 +48,7 @@ const DoctorEdit: React.FC = () => {
         }}
       >
         <Grid container spacing={3}>
-          //Campo Nome
+          Nome
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Name *"
@@ -61,7 +61,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-          //Campo Cognome
+          Cognome
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Surname *"
@@ -74,7 +74,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-          //Campo Professione
+          Professione
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Profession *"
@@ -87,7 +87,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-          //Campo Email
+          Email
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Email *"
@@ -100,7 +100,7 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-          //Campo Numero di Telefono
+          Numero di Telefono
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Phone number *"
@@ -113,7 +113,6 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-          //Barra dei Bottoni inferiore
           <Grid size={{ xs: 12 }}>
             <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
               {/* Bottone SAVE Rosso */}
@@ -136,7 +135,7 @@ const DoctorEdit: React.FC = () => {
               >
                 Save
               </Button>
-              // Bottone BACK Bianco con bordo rosso
+
               <Button
                 variant="outlined"
                 onClick={() => navigate(-1)}

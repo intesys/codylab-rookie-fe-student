@@ -1,5 +1,7 @@
 import Billing from "@components/Billing";
 import Doctor from "@components/Doctor";
+import DoctorEdit from "@components/Doctor/DoctorEdit";
+import DoctorNew from "@components/Doctor/DoctorNew";
 import Doctors from "@components/Doctors";
 import Home from "@components/Home";
 import News from "@components/News";
@@ -7,10 +9,6 @@ import Patient from "@components/Patient";
 import Patients from "@components/Patients";
 import Pharmacy from "@components/Pharmacy";
 import Ward from "@components/Ward";
-
-// AGGIUNTA: Importazione necessaria per non far fallire la compilazione di DoctorEdit
-import DoctorEdit from "@components/Doctor/DoctorEdit";
-
 import {
   BILLING_PATH,
   DASHBOARD_PATH,
@@ -34,16 +32,14 @@ const AppRoutes: React.FC = () => {
           <Route index element={<Patients />} />
           <Route path=":id" element={<Patient />} />
           {/* <Route path="new" element={<PatientNew />} />
-          <Route path=":id/edit" element={<PatientEdit />} />
-          <Route path={`:id/${PATIENTS_RECORDS_PATH}/new`} element={<PatientRecordNew />} /> */}
+    <Route path=":id/edit" element={<PatientEdit />} />
+    <Route path={`:id/${PATIENTS_RECORDS_PATH}/new`} element={<PatientRecordNew />} /> */}
         </Route>
         <Route path={DOCTORS_PATH}>
           <Route index element={<Doctors />} />
           <Route path=":id" element={<Doctor />} />
-          {/* AGGIUSTATO: Scommentata la rotta DoctorEdit mantenendo intatta la struttura originale */}
           <Route path=":id/edit" element={<DoctorEdit />} />
-          {/* AGGIUSTATO: Isolata la rotta DoctorNew nel proprio blocco di commenti JSX corretto */}
-          {/* <Route path="new" element={<DoctorNew />} /> */}
+          <Route path="new" element={<DoctorNew />} />
         </Route>
         <Route path={PHARMACY_PATH} element={<Pharmacy />} />
         <Route path={WARD_PATH} element={<Ward />} />

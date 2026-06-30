@@ -22,7 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Doctor: React.FC = () => {
   const doctor = {
@@ -43,19 +43,20 @@ const Doctor: React.FC = () => {
     { pid: 4, opd: "5232", idp: "3211", name: "Enrico", surname: "Costanzi" },
   ];
 
+  const navigate = useNavigate();
+
   return (
     <div>
       <Breadcrumb>
         <BreadcrumbEl>
           <Link to={getPath(DOCTORS_PATH)}>Doctors</Link>
         </BreadcrumbEl>
-        {/* Gestione dinamica del nome all'interno del Breadcrumb originale */}
+
         <BreadcrumbEl active>
           {doctor.name} {doctor.surname}
         </BreadcrumbEl>
       </Breadcrumb>
 
-      {/* --- AGGIUNTA STRUTTURA GRAFICA COMPLETA --- */}
       <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: 700, color: "#333", fontSize: "1.15rem" }}>
         DOCTOR DETAILS
       </Typography>
@@ -75,18 +76,14 @@ const Doctor: React.FC = () => {
         }}
       >
         <Avatar
+          src={`https://api.dicebear.com/7.x/bottts/svg?seed=1`}
           sx={{
-            bgcolor: "#0059B2",
             width: 60,
             height: 60,
-            fontSize: "1.8rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+
+            bgcolor: "#005bae",
           }}
-        >
-          🤖
-        </Avatar>
+        />
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Typography variant="h5" sx={{ fontWeight: 500, color: "#333", fontSize: "1.6rem" }}>
@@ -95,7 +92,12 @@ const Doctor: React.FC = () => {
                 {doctor.surname}
               </Box>
             </Typography>
-            <IconButton size="small" sx={{ color: "#E31B23", ml: 0.5, p: 0 }}>
+            <IconButton
+              size="small"
+              component={Link}
+              to={`/doctors/${doctor.name}/edit`}
+              sx={{ color: "#E31B23", ml: 0.5, p: 0 }}
+            >
               <EditIcon fontSize="small" />
             </IconButton>
           </Box>
@@ -105,9 +107,7 @@ const Doctor: React.FC = () => {
         </Box>
       </Card>
 
-      {/* Layout Principale a Due Colonne */}
       <Grid container spacing={3}>
-        {/* Sidebar Grigio Scuro (Contatti e Ultimi Visitati) */}
         <Grid size={{ xs: 12, md: 3.8 }}>
           <Box sx={{ bgcolor: "#3F4142", color: "#FFF", p: 3, borderRadius: "4px", minHeight: "340px" }}>
             {/* Sezione CONTATTI */}
@@ -137,7 +137,7 @@ const Doctor: React.FC = () => {
               </Typography>
             </Box>
 
-            {/* Sezione ULTIMI VISITATI */}
+            {/*  ULTIMI VISITATI */}
             <Typography
               variant="caption"
               sx={{
@@ -173,7 +173,6 @@ const Doctor: React.FC = () => {
           </Box>
         </Grid>
 
-        {/* Tabella Bianca Pazienti */}
         <Grid size={{ xs: 12, md: 8.2 }}>
           <TableContainer
             component={Paper}
