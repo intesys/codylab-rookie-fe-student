@@ -1,6 +1,6 @@
 import { PATIENTS_PATH } from "@config/paths";
 import { PatientDTO, PatientDTOBloodGroupEnum } from "@generated/axios";
-import { getPath } from "@lib/utils";
+import { getBloodType, getPath } from "@lib/utils";
 import { Box, Button, MenuItem, Switch, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ const PatientForm: React.FC<IProps> = ({ patient, onChange, onSubmit }) => {
         >
           {BLOOD_GROUPS.map((bg) => (
             <MenuItem key={bg} value={bg}>
-              {bg}
+              {getBloodType(bg)}
             </MenuItem>
           ))}
         </TextField>

@@ -27,20 +27,21 @@ const PatientDetail: React.FC<IProps> = ({ patient }) => {
   const lastDoctor = lastRecord?.doctor ?? null;
 
   return (
-    <Box sx={{ display: "flex", gap: 0, borderRadius: 1, overflow: "hidden", border: "1px solid #e0e0e0" }}>
+    <Box sx={{ width: 300 }}>
       <Box
         sx={{
-          width: 300,
-          minWidth: 300,
-          bgcolor: "#3a3a3a",
-          color: "white",
+          bgcolor: "white",
+          color: "black",
           p: 3,
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          borderRadius: 1,
+          overflow: "hidden",
+          border: "1px solid #e0e0e0",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Avatar
             src={generateAvatarImage(DetailType.PATIENT, patient.id)}
             alt={`${patient.name} ${patient.surname}`}
@@ -48,7 +49,7 @@ const PatientDetail: React.FC<IProps> = ({ patient }) => {
           />
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <Typography variant="h6" sx={{ fontWeight: 400, color: "white" }}>
+              <Typography variant="h6" sx={{ fontWeight: 400, color: "black" }}>
                 {patient.name} <strong>{patient.surname}</strong>
               </Typography>
               <EditIcon
@@ -56,26 +57,30 @@ const PatientDetail: React.FC<IProps> = ({ patient }) => {
                 onClick={() => navigate(getEditDetailPath(PATIENTS_PATH, patient.id))}
               />
             </Box>
-            <Typography variant="body2" sx={{ color: "#bdbdbd" }}>
+            <Typography variant="body2" sx={{ color: "#666" }}>
               {patient.address ?? "-"}
             </Typography>
           </Box>
         </Box>
+      </Box>
 
-        <Divider sx={{ borderColor: "#555" }} />
-
+      <Box
+        sx={{
+          bgcolor: "#3a3a3a",
+          color: "white",
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          borderRadius: 1,
+          overflow: "hidden",
+          border: "1px solid #e0e0e0",
+          mt: 2,
+        }}
+      >
         <Typography variant="overline" sx={{ color: "#bdbdbd", letterSpacing: 1.5, fontSize: 10 }}>
           HEALTH INFORMATION
         </Typography>
-
-        <Box>
-          <Typography variant="caption" sx={{ color: "#9e9e9e" }}>
-            PATIENT ID
-          </Typography>
-          <Typography variant="h5" sx={{ color: "white", fontWeight: 700 }}>
-            {patient.id ?? "-"}
-          </Typography>
-        </Box>
 
         <Box>
           <Typography variant="caption" sx={{ color: "#9e9e9e" }}>
@@ -152,34 +157,36 @@ const PatientDetail: React.FC<IProps> = ({ patient }) => {
 
         <Divider sx={{ borderColor: "#555" }} />
 
-      {lastDoctor && (
-          <Box>
-            <Typography variant="caption" sx={{ color: "#9e9e9e", letterSpacing: 1 }}>
+        {lastDoctor && (
+          <>
+            <Typography variant="overline" sx={{ color: "#bdbdbd", letterSpacing: 1.5, fontSize: 10 }}>
               LAST DOCTOR WHO VISIT THE PATIENT
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1 }}>
-              <Avatar src={generateAvatarImage(DetailType.PATIENT, lastDoctor.id)} sx={{ width: 36, height: 36 }} />
-              <Typography variant="body1" sx={{ color: "white", fontWeight: 600 }}>
-                {lastDoctor.name} {lastDoctor.surname}
-              </Typography>
+            <Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1 }}>
+                <Avatar src={generateAvatarImage(DetailType.PATIENT, lastDoctor.id)} sx={{ width: 36, height: 36 }} />
+                <Typography variant="body1" sx={{ color: "white", fontWeight: 600 }}>
+                  {lastDoctor.name} {lastDoctor.surname}
+                </Typography>
+              </Box>
+              {lastDoctor.phoneNumber && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
+                  <PhoneIcon sx={{ fontSize: 16, color: "#e57373" }} />
+                  <Typography variant="body2" sx={{ color: "#e0e0e0" }}>
+                    {lastDoctor.phoneNumber}
+                  </Typography>
+                </Box>
+              )}
+              {lastDoctor.email && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+                  <EmailIcon sx={{ fontSize: 16, color: "#e57373" }} />
+                  <Typography variant="body2" sx={{ color: "#e0e0e0" }}>
+                    {lastDoctor.email}
+                  </Typography>
+                </Box>
+              )}
             </Box>
-            {lastDoctor.phoneNumber && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-                <PhoneIcon sx={{ fontSize: 16, color: "#e57373" }} />
-                <Typography variant="body2" sx={{ color: "#e0e0e0" }}>
-                  {lastDoctor.phoneNumber}
-                </Typography>
-              </Box>
-            )}
-            {lastDoctor.email && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-                <EmailIcon sx={{ fontSize: 16, color: "#e57373" }} />
-                <Typography variant="body2" sx={{ color: "#e0e0e0" }}>
-                  {lastDoctor.email}
-                </Typography>
-              </Box>
-            )}
-          </Box>
+          </>
         )}
       </Box>
     </Box>

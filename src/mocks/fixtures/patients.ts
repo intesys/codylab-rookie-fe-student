@@ -1,4 +1,4 @@
-import { PatientDTO, PatientDTOBloodGroupEnum } from "@generated/axios";
+/*import { PatientDTO, PatientDTOBloodGroupEnum } from "@generated/axios";
 
 export const patients: PatientDTO[] = [
   {
@@ -47,3 +47,4 @@ export const patients: PatientDTO[] = [
     lastDoctorVisitedId: 2,
   },
 ];
+*/
