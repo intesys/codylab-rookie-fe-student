@@ -3,241 +3,623 @@ import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { PatientFilterDTO } from "@generated/axios";
 import React, { Dispatch, useMemo, useReducer, useState } from "react";
 import { Action, patientsFilterReducer } from "./lib";
-import NewPatient from "./newPatient"; // Make sure this path exactly matches your filename
+
+export interface Patient {
+  id: string;
+  pid: string;
+  opd: string;
+  ipd: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  bloodGroup: string;
+  phone: string;
+  email: string;
+}
 
 interface IPatientsFilterContext {
   filter: PatientFilterDTO;
   dispatch: Dispatch<Action>;
 }
 
-export const PatientsFilterContext: React.Context<IPatientsFilterContext> = React.createContext({
+export const PatientsFilterContext = React.createContext<IPatientsFilterContext>({
   filter: {},
-  dispatch: (action) => {},
+  dispatch: () => {},
 });
 
-const Patients: React.FC = () => {
-  const [filter, dispatch] = useReducer(patientsFilterReducer, {});
-  const patientContextValue = useMemo(() => ({ filter, dispatch }), [filter, dispatch]);
+interface PatientsListProps {
+  patients: Patient[];
+  onAddNew: () => void;
+  onEdit: (patient: Patient) => void;
+  onViewDetails: (patient: Patient) => void;
+}
 
-  // State to toggle between database filters and adding a new patient
-  const [isAddingNew, setIsAddingNew] = useState<boolean>(false);
+const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit, onViewDetails }) => {
+  const [pid, setPid] = useState("");
+  const [opd, setOpd] = useState("");
+  const [ipd, setIpd] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [gender, setGender] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
 
-  // Common input styling for reuse
-  const inputStyle = {
-    padding: "10px 14px",
-    border: "1px solid #d1d5db",
+  const filteredPatients = patients.filter((p) => {
+    return (
+      p.pid.toLowerCase().includes(pid.toLowerCase()) &&
+      p.opd.toLowerCase().includes(opd.toLowerCase()) &&
+      p.ipd.toLowerCase().includes(ipd.toLowerCase()) &&
+      p.firstName.toLowerCase().includes(firstName.toLowerCase()) &&
+      p.lastName.toLowerCase().includes(lastName.toLowerCase()) &&
+      p.gender.toLowerCase().includes(gender.toLowerCase()) &&
+      p.bloodGroup.toLowerCase().includes(bloodGroup.toLowerCase()) &&
+      p.phone.toLowerCase().includes(phone.toLowerCase()) &&
+      p.email.toLowerCase().includes(email.toLowerCase())
+    );
+  });
+
+  const inputStyle: React.CSSProperties = {
+    padding: "8px",
+    border: "1px solid #ccc",
     borderRadius: "4px",
-    fontSize: "0.875rem",
     width: "100%",
-    boxSizing: "border-box" as const,
+    boxSizing: "border-box",
   };
-
-  const labelStyle = {
-    display: "block",
-    marginBottom: "6px",
-    fontSize: "0.875rem",
-    fontWeight: "500",
-    color: "#374151",
-  };
-
-  // If "+ ADD PATIENT" is clicked, render the form layout instead
-  if (isAddingNew) {
-    return <NewPatient onBack={() => setIsAddingNew(false)} />;
-  }
 
   return (
-    <PatientsFilterContext.Provider value={patientContextValue}>
-      <Breadcrumb>
-        <BreadcrumbEl active>Patients</BreadcrumbEl>
-      </Breadcrumb>
-
+    <div style={{ padding: 20 }}>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "20px",
-          marginTop: "10px",
         }}
       >
-        <h3 style={{ margin: 0, fontWeight: "bold", fontSize: "1.25rem" }}> PATIENTS DATABASE </h3>
+        <h2>PATIENTS DATABASE</h2>
 
         <button
-          onClick={() => setIsAddingNew(true)}
+          onClick={onAddNew}
           style={{
-            backgroundColor: "white",
+            background: "white",
             color: "red",
             border: "1px solid red",
-            padding: "8px 16px",
-            fontWeight: "600",
+            padding: "8px 14px",
             cursor: "pointer",
-            borderRadius: "4px",
+            fontWeight: "bold",
           }}
         >
-          + ADD PATIENT
+          + ADD NEW PATIENT
         </button>
       </div>
 
       <div
         style={{
-          backgroundColor: "white",
-          padding: "24px",
-          borderRadius: "6px",
-          border: "1px solid #e5e7eb",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          marginTop: 20,
+          border: "1px solid #ddd",
+          padding: 20,
+          borderRadius: 6,
+          background: "#fafafa",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "24px" }}>
-          <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: "bold", color: "#1f2937" }}>PATIENT FILTERS</h3>
-          <p style={{ margin: 0, fontSize: "0.75rem", color: "#6b7280" }}>
-            Fill in the fields below to search the patient database
-          </p>
-        </div>
+        <h3>FIND A PATIENT</h3>
 
-        {/* Section 1: System Identifiers */}
-        <h4
-          style={{
-            margin: "0 0 12px 0",
-            fontSize: "0.9rem",
-            color: "#4b5563",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Identifiers
-        </h4>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
+            gridTemplateColumns: "repeat(3,1fr)",
+            gap: 15,
           }}
         >
-          <div>
-            <label style={labelStyle}>Patient ID (PID)</label>
-            <input type="text" placeholder="e.g. PID-12345" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Outpatient Number (OPD)</label>
-            <input type="text" placeholder="e.g. OPD-9876" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Inpatient Number (IPD)</label>
-            <input type="text" placeholder="e.g. IPD-5432" style={inputStyle} />
-          </div>
-        </div>
+          <input placeholder="PID" value={pid} onChange={(e) => setPid(e.target.value)} style={inputStyle} />
 
-        {/* Section 2: Personal Information (Updated grid columns size to fit 5 fields nicely) */}
-        <h4
-          style={{
-            margin: "0 0 12px 0",
-            fontSize: "0.9rem",
-            color: "#4b5563",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Personal Details
-        </h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <div>
-            <label style={labelStyle}>First Name</label>
-            <input type="text" placeholder="John" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Last Name</label>
-            <input type="text" placeholder="Doe" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Date of Birth</label>
-            <input type="date" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Gender</label>
-            <select style={inputStyle} defaultValue="">
-              <option value="" disabled>
-                Select Gender
-              </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+          <input placeholder="OPD" value={opd} onChange={(e) => setOpd(e.target.value)} style={inputStyle} />
 
-          {/* Blood Group Filter Dropdown */}
-          <div>
-            <label style={labelStyle}>Blood Group</label>
-            <select style={inputStyle} defaultValue="">
-              <option value="">All Groups</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-            </select>
-          </div>
-        </div>
+          <input placeholder="IPD" value={ipd} onChange={(e) => setIpd(e.target.value)} style={inputStyle} />
 
-        {/* Section 3: Contact Details */}
-        <h4
-          style={{
-            margin: "0 0 12px 0",
-            fontSize: "0.9rem",
-            color: "#4b5563",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Contact Info
-        </h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <div>
-            <label style={labelStyle}>Phone Number</label>
-            <input type="tel" placeholder="+1 (555) 000-0000" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Email Address</label>
-            <input type="email" placeholder="john.doe@example.com" style={inputStyle} />
-          </div>
-        </div>
+          <input
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            style={inputStyle}
+          />
 
-        {/* Search Action Row */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px" }}>
-          <button
-            style={{
-              color: "white",
-              border: "1px solid red",
-              backgroundColor: "red",
-              padding: "12px 36px",
-              fontWeight: "600",
-              fontSize: "0.875rem",
-              cursor: "pointer",
-              borderRadius: "4px",
-              transition: "background-color 0.2s",
-            }}
-          >
-            Search Database
-          </button>
+          <input
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            style={inputStyle}
+          />
+
+          <select value={gender} onChange={(e) => setGender(e.target.value)} style={inputStyle}>
+            <option value="">Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+
+          <select value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)} style={inputStyle}>
+            <option value="">Blood Group</option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
+          </select>
+
+          <input placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
+
+          <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
         </div>
       </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 20,
+          marginTop: 25,
+        }}
+      >
+        {filteredPatients.length === 0 ? (
+          <p>No patients found.</p>
+        ) : (
+          filteredPatients.map((patient) => (
+            <div
+              key={patient.id}
+              style={{
+                width: 280,
+                border: "1px solid #ddd",
+                borderRadius: 8,
+                padding: 20,
+                background: "white",
+                boxShadow: "0 2px 4px rgba(0,0,0,.05)",
+              }}
+            >
+              <div
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: "50%",
+                  background: "#007bff",
+                  margin: "0 auto 15px",
+                }}
+              />
+
+              <h3 style={{ textAlign: "center" }}>
+                {patient.firstName} {patient.lastName}
+              </h3>
+
+              <p>PID: {patient.pid}</p>
+              <p>OPD: {patient.opd}</p>
+              <p>IPD: {patient.ipd}</p>
+              <p>{patient.gender}</p>
+              <p>{patient.bloodGroup}</p>
+              <p>{patient.phone}</p>
+              <p style={{ color: "red", fontSize: 13 }}>{patient.email}</p>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 10,
+                  marginTop: 15,
+                }}
+              >
+                <button onClick={() => onViewDetails(patient)}>View</button>
+
+                <button onClick={() => onEdit(patient)}>Edit</button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+interface PatientFormProps {
+  patient?: Patient | null;
+  onSave: (patient: Patient) => void;
+  onBack: () => void;
+}
+
+const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) => {
+  const [pid, setPid] = useState(patient?.pid || "");
+  const [opd, setOpd] = useState(patient?.opd || "");
+  const [ipd, setIpd] = useState(patient?.ipd || "");
+  const [firstName, setFirstName] = useState(patient?.firstName || "");
+  const [lastName, setLastName] = useState(patient?.lastName || "");
+  const [dob, setDob] = useState(patient?.dob || "");
+  const [gender, setGender] = useState(patient?.gender || "");
+  const [bloodGroup, setBloodGroup] = useState(patient?.bloodGroup || "");
+  const [phone, setPhone] = useState(patient?.phone || "");
+  const [email, setEmail] = useState(patient?.email || "");
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    onSave({
+      id: patient?.id || Date.now().toString(),
+      pid,
+      opd,
+      ipd,
+      firstName,
+      lastName,
+      dob,
+      gender,
+      bloodGroup,
+      phone,
+      email,
+    });
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        padding: 20,
+        margin: 20,
+        border: "1px solid #ddd",
+        borderRadius: 8,
+        background: "#fff",
+      }}
+    >
+      <h2>{patient ? "EDIT PATIENT" : "NEW PATIENT"}</h2>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "20px 15px",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>PID *</label>
+          <input value={pid} onChange={(e) => setPid(e.target.value)} required style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>OPD</label>
+          <input value={opd} onChange={(e) => setOpd(e.target.value)} style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>IPD</label>
+          <input value={ipd} onChange={(e) => setIpd(e.target.value)} style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>First Name *</label>
+          <input value={firstName} onChange={(e) => setFirstName(e.target.value)} required style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Last Name *</label>
+          <input value={lastName} onChange={(e) => setLastName(e.target.value)} required style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Date of Birth</label>
+          <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Gender</label>
+          <select value={gender} onChange={(e) => setGender(e.target.value)} style={inputStyle}>
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Blood Group</label>
+          <select value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)} style={inputStyle}>
+            <option value="">Select</option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Phone</label>
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+        </div>
+      </div>
+
+      <div style={{ marginTop: 25 }}>
+        <button
+          type="submit"
+          style={{
+            background: "red",
+            color: "white",
+            border: "none",
+            padding: "10px 20px",
+            cursor: "pointer",
+            marginRight: 10,
+            fontWeight: "bold",
+          }}
+        >
+          SAVE
+        </button>
+
+        <button
+          type="button"
+          onClick={onBack}
+          style={{
+            background: "white",
+            border: "1px solid #ccc",
+            padding: "10px 20px",
+            cursor: "pointer",
+          }}
+        >
+          BACK
+        </button>
+      </div>
+    </form>
+  );
+};
+
+interface PatientDetailsProps {
+  patient: Patient;
+  onBack: () => void;
+}
+
+const PatientDetails: React.FC<PatientDetailsProps> = ({ patient, onBack }) => {
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>PATIENT DETAILS</h2>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 25,
+          border: "1px solid #ddd",
+          borderRadius: 8,
+          padding: 20,
+          background: "#fff",
+        }}
+      >
+        <div
+          style={{
+            width: 280,
+            background: "#333",
+            color: "white",
+            padding: 20,
+          }}
+        >
+          <h3>
+            {patient.firstName} {patient.lastName}
+          </h3>
+
+          <hr style={{ borderColor: "#555" }} />
+
+          <p>PID: {patient.pid}</p>
+          <p>OPD: {patient.opd}</p>
+          <p>IPD: {patient.ipd}</p>
+          <p>DOB: {patient.dob}</p>
+          <p>Gender: {patient.gender}</p>
+          <p>Blood: {patient.bloodGroup}</p>
+          <p>📞 {patient.phone}</p>
+          <p style={{ color: "red" }}>✉ {patient.email}</p>
+
+          <button
+            onClick={onBack}
+            style={{
+              marginTop: 20,
+              width: "100%",
+              padding: 8,
+              cursor: "pointer",
+            }}
+          >
+            Back to List
+          </button>
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <h3>Medical Information</h3>
+
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead>
+              <tr style={{ borderBottom: "2px solid #ccc" }}>
+                <th style={{ padding: 8, textAlign: "left" }}>Field</th>
+                <th style={{ padding: 8, textAlign: "left" }}>Value</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td style={{ padding: 8 }}>PID</td>
+                <td style={{ padding: 8 }}>{patient.pid}</td>
+              </tr>
+
+              <tr>
+                <td style={{ padding: 8 }}>OPD</td>
+                <td style={{ padding: 8 }}>{patient.opd}</td>
+              </tr>
+
+              <tr>
+                <td style={{ padding: 8 }}>IPD</td>
+                <td style={{ padding: 8 }}>{patient.ipd}</td>
+              </tr>
+
+              <tr>
+                <td style={{ padding: 8 }}>Blood Group</td>
+                <td style={{ padding: 8 }}>{patient.bloodGroup}</td>
+              </tr>
+
+              <tr>
+                <td style={{ padding: 8 }}>Phone</td>
+                <td style={{ padding: 8 }}>{patient.phone}</td>
+              </tr>
+
+              <tr>
+                <td style={{ padding: 8 }}>Email</td>
+                <td style={{ padding: 8 }}>{patient.email}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Patients: React.FC = () => {
+  const [filter, dispatch] = useReducer(patientsFilterReducer, {});
+  const patientsContextValue = useMemo(() => ({ filter, dispatch }), [filter, dispatch]);
+
+  const [patients, setPatients] = useState<Patient[]>([
+    {
+      id: "1",
+      pid: "PID-1001",
+      opd: "OPD-2001",
+      ipd: "IPD-3001",
+      firstName: "John",
+      lastName: "Doe",
+      dob: "1990-04-12",
+      gender: "Male",
+      bloodGroup: "A+",
+      phone: "555-111-2222",
+      email: "john.doe@email.com",
+    },
+    {
+      id: "2",
+      pid: "PID-1002",
+      opd: "OPD-2002",
+      ipd: "IPD-3002",
+      firstName: "Anna",
+      lastName: "Smith",
+      dob: "1988-07-22",
+      gender: "Female",
+      bloodGroup: "O+",
+      phone: "555-333-4444",
+      email: "anna.smith@email.com",
+    },
+    {
+      id: "3",
+      pid: "PID-1003",
+      opd: "OPD-2003",
+      ipd: "IPD-3003",
+      firstName: "Michael",
+      lastName: "Brown",
+      dob: "1979-01-15",
+      gender: "Male",
+      bloodGroup: "B-",
+      phone: "555-555-6666",
+      email: "michael.brown@email.com",
+    },
+  ]);
+
+  const [view, setView] = useState<"LIST" | "NEW" | "EDIT" | "DETAILS">("LIST");
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
+  const handleSavePatient = (savedPatient: Patient) => {
+    setPatients((prev) => {
+      const exists = prev.some((p) => p.id === savedPatient.id);
+
+      if (exists) {
+        return prev.map((p) => (p.id === savedPatient.id ? savedPatient : p));
+      }
+
+      return [...prev, savedPatient];
+    });
+
+    setSelectedPatient(null);
+    setView("LIST");
+  };
+
+  return (
+    <PatientsFilterContext.Provider value={patientsContextValue}>
+      <Breadcrumb>
+        <BreadcrumbEl active={view === "LIST"}>
+          <span
+            onClick={() => {
+              setView("LIST");
+              setSelectedPatient(null);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            Patients
+          </span>
+        </BreadcrumbEl>
+
+        {view === "NEW" && <BreadcrumbEl active>New</BreadcrumbEl>}
+        {view === "EDIT" && <BreadcrumbEl active>Edit</BreadcrumbEl>}
+        {view === "DETAILS" && selectedPatient && (
+          <BreadcrumbEl active>
+            {selectedPatient.firstName} {selectedPatient.lastName}
+          </BreadcrumbEl>
+        )}
+      </Breadcrumb>
+
+      {view === "LIST" && (
+        <PatientsList
+          patients={patients}
+          onAddNew={() => {
+            setSelectedPatient(null);
+            setView("NEW");
+          }}
+          onEdit={(patient) => {
+            setSelectedPatient(patient);
+            setView("EDIT");
+          }}
+          onViewDetails={(patient) => {
+            setSelectedPatient(patient);
+            setView("DETAILS");
+          }}
+        />
+      )}
+
+      {(view === "NEW" || view === "EDIT") && (
+        <PatientForm
+          patient={selectedPatient}
+          onSave={handleSavePatient}
+          onBack={() => {
+            setSelectedPatient(null);
+            setView("LIST");
+          }}
+        />
+      )}
+
+      {view === "DETAILS" && selectedPatient && (
+        <PatientDetails
+          patient={selectedPatient}
+          onBack={() => {
+            setSelectedPatient(null);
+            setView("LIST");
+          }}
+        />
+      )}
     </PatientsFilterContext.Provider>
   );
 };
