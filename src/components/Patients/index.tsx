@@ -1,8 +1,24 @@
 import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { PatientFilterDTO } from "@generated/axios";
-import React, { Dispatch, useMemo, useReducer, useState } from "react";
+import React, { Dispatch, useEffect, useMemo, useReducer, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Action, patientsFilterReducer } from "./lib";
+
+// --- Interfaces & Types ---
+
+export interface MedicalRecord {
+  date: string;
+  typeVisit: string;
+  reasonVisit: string;
+  treatmentMade: string;
+  doctor: {
+    id: number;
+    name: string;
+    surname: string;
+    profession?: string;
+  } | null;
+}
 
 export interface Patient {
   id: string;
@@ -16,6 +32,13 @@ export interface Patient {
   bloodGroup: string;
   phone: string;
   email: string;
+  records?: MedicalRecord[]; // Track medical records locally
+}
+
+interface DoctorItem {
+  id: number;
+  name: string;
+  surname: string;
 }
 
 interface IPatientsFilterContext {
@@ -28,14 +51,17 @@ export const PatientsFilterContext = React.createContext<IPatientsFilterContext>
   dispatch: () => {},
 });
 
+// --- Component 1: Patients List ---
+
 interface PatientsListProps {
   patients: Patient[];
   onAddNew: () => void;
   onEdit: (patient: Patient) => void;
   onViewDetails: (patient: Patient) => void;
+  onAddNewRecord: (patient: Patient) => void;
 }
 
-const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit, onViewDetails }) => {
+const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit, onViewDetails, onAddNewRecord }) => {
   const [pid, setPid] = useState("");
   const [opd, setOpd] = useState("");
   const [ipd, setIpd] = useState("");
@@ -70,15 +96,8 @@ const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit,
 
   return (
     <div style={{ padding: 20 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2>PATIENTS DATABASE</h2>
-
         <button
           onClick={onAddNew}
           style={{
@@ -94,50 +113,29 @@ const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit,
         </button>
       </div>
 
-      <div
-        style={{
-          marginTop: 20,
-          border: "1px solid #ddd",
-          padding: 20,
-          borderRadius: 6,
-          background: "#fafafa",
-        }}
-      >
+      <div style={{ marginTop: 20, border: "1px solid #ddd", padding: 20, borderRadius: 6, background: "#fafafa" }}>
         <h3>FIND A PATIENT</h3>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: 15,
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 15 }}>
           <input placeholder="PID" value={pid} onChange={(e) => setPid(e.target.value)} style={inputStyle} />
-
           <input placeholder="OPD" value={opd} onChange={(e) => setOpd(e.target.value)} style={inputStyle} />
-
           <input placeholder="IPD" value={ipd} onChange={(e) => setIpd(e.target.value)} style={inputStyle} />
-
           <input
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             style={inputStyle}
           />
-
           <input
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             style={inputStyle}
           />
-
           <select value={gender} onChange={(e) => setGender(e.target.value)} style={inputStyle}>
             <option value="">Gender</option>
             <option>Male</option>
             <option>Female</option>
           </select>
-
           <select value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)} style={inputStyle}>
             <option value="">Blood Group</option>
             <option>A+</option>
@@ -149,21 +147,12 @@ const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit,
             <option>O+</option>
             <option>O-</option>
           </select>
-
           <input placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
-
           <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 20,
-          marginTop: 25,
-        }}
-      >
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 20, marginTop: 25 }}>
         {filteredPatients.length === 0 ? (
           <p>No patients found.</p>
         ) : (
@@ -180,38 +169,42 @@ const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit,
               }}
             >
               <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: "50%",
-                  background: "#007bff",
-                  margin: "0 auto 15px",
-                }}
+                style={{ width: 60, height: 60, borderRadius: "50%", background: "#007bff", margin: "0 auto 15px" }}
               />
-
               <h3 style={{ textAlign: "center" }}>
                 {patient.firstName} {patient.lastName}
               </h3>
-
               <p>PID: {patient.pid}</p>
               <p>OPD: {patient.opd}</p>
               <p>IPD: {patient.ipd}</p>
-              <p>{patient.gender}</p>
-              <p>{patient.bloodGroup}</p>
+              <p>
+                {patient.gender} | {patient.bloodGroup}
+              </p>
               <p>{patient.phone}</p>
-              <p style={{ color: "red", fontSize: 13 }}>{patient.email}</p>
+              <p style={{ color: "red", fontSize: 13, marginBottom: 15 }}>{patient.email}</p>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 10,
-                  marginTop: 15,
-                }}
-              >
-                <button onClick={() => onViewDetails(patient)}>View</button>
-
-                <button onClick={() => onEdit(patient)}>Edit</button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: 10 }}>
+                  <button onClick={() => onViewDetails(patient)} style={{ flex: 1, padding: "5px" }}>
+                    View
+                  </button>
+                  <button onClick={() => onEdit(patient)} style={{ flex: 1, padding: "5px" }}>
+                    Edit
+                  </button>
+                </div>
+                <button
+                  onClick={() => onAddNewRecord(patient)}
+                  style={{
+                    background: "#e1f5fe",
+                    color: "#0288d1",
+                    border: "1px solid #0288d1",
+                    padding: "6px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  + New Record
+                </button>
               </div>
             </div>
           ))
@@ -220,6 +213,8 @@ const PatientsList: React.FC<PatientsListProps> = ({ patients, onAddNew, onEdit,
     </div>
   );
 };
+
+// --- Component 2: Patient Form (Add/Edit Profile) ---
 
 interface PatientFormProps {
   patient?: Patient | null;
@@ -249,7 +244,6 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     onSave({
       id: patient?.id || Date.now().toString(),
       pid,
@@ -262,59 +256,41 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
       bloodGroup,
       phone,
       email,
+      records: patient?.records || [],
     });
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      style={{
-        padding: 20,
-        margin: 20,
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        background: "#fff",
-      }}
+      style={{ padding: 20, margin: 20, border: "1px solid #ddd", borderRadius: 8, background: "#fff" }}
     >
       <h2>{patient ? "EDIT PATIENT" : "NEW PATIENT"}</h2>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px 15px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px 15px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>PID *</label>
           <input value={pid} onChange={(e) => setPid(e.target.value)} required style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>OPD</label>
           <input value={opd} onChange={(e) => setOpd(e.target.value)} style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>IPD</label>
           <input value={ipd} onChange={(e) => setIpd(e.target.value)} style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>First Name *</label>
           <input value={firstName} onChange={(e) => setFirstName(e.target.value)} required style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Last Name *</label>
           <input value={lastName} onChange={(e) => setLastName(e.target.value)} required style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Date of Birth</label>
           <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Gender</label>
           <select value={gender} onChange={(e) => setGender(e.target.value)} style={inputStyle}>
@@ -324,7 +300,6 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
             <option>Other</option>
           </select>
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Blood Group</label>
           <select value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)} style={inputStyle}>
@@ -339,18 +314,15 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
             <option>O-</option>
           </select>
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Phone</label>
           <input value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={{ fontWeight: "500", fontSize: "14px" }}>Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
         </div>
       </div>
-
       <div style={{ marginTop: 25 }}>
         <button
           type="submit"
@@ -366,16 +338,10 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
         >
           SAVE
         </button>
-
         <button
           type="button"
           onClick={onBack}
-          style={{
-            background: "white",
-            border: "1px solid #ccc",
-            padding: "10px 20px",
-            cursor: "pointer",
-          }}
+          style={{ background: "white", border: "1px solid #ccc", padding: "10px 20px", cursor: "pointer" }}
         >
           BACK
         </button>
@@ -383,6 +349,145 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSave, onBack }) =>
     </form>
   );
 };
+
+// --- Component 3: New Medical Record Form (Integrated Doctor Selection) ---
+
+interface NewRecordFormProps {
+  patient: Patient;
+  onSaveRecord: (record: MedicalRecord) => void;
+  onBack: () => void;
+}
+
+const NewRecordForm: React.FC<NewRecordFormProps> = ({ patient, onSaveRecord, onBack }) => {
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [typeVisit, setTypeVisit] = useState("");
+  const [reasonVisit, setReasonVisit] = useState("");
+  const [treatmentMade, setTreatmentMade] = useState("");
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | number>("");
+
+  // Static list simulated from your prior API logic
+  const [doctors] = useState<DoctorItem[]>([
+    { id: 101, name: "Dr. Gregory", surname: "House" },
+    { id: 102, name: "Dr. Meredith", surname: "Grey" },
+    { id: 103, name: "Dr. John", surname: "Watson" },
+  ]);
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedDoctorId) {
+      alert("Please select a valid doctor");
+      return;
+    }
+
+    const doctorDetails = doctors.find((d) => d.id === Number(selectedDoctorId));
+
+    const finalRecord: MedicalRecord = {
+      date: new Date(`${date}T12:00:00.000Z`).toISOString(),
+      typeVisit,
+      reasonVisit,
+      treatmentMade,
+      doctor: doctorDetails ? { id: doctorDetails.id, name: doctorDetails.name, surname: doctorDetails.surname } : null,
+    };
+
+    onSaveRecord(finalRecord);
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      style={{ padding: 20, margin: 20, border: "1px solid #ddd", borderRadius: 8, background: "#fff" }}
+    >
+      <h2 style={{ textTransform: "uppercase" }}>
+        {patient.firstName} {patient.lastName} : New Medical Record
+      </h2>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px 15px", marginBottom: 20 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Date *</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required style={inputStyle} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Type of Visit *</label>
+          <input value={typeVisit} onChange={(e) => setTypeVisit(e.target.value)} required style={inputStyle} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Doctor *</label>
+          <select
+            value={selectedDoctorId}
+            onChange={(e) => setSelectedDoctorId(e.target.value)}
+            required
+            style={inputStyle}
+          >
+            <option value="">Select Doctor</option>
+            {doctors.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name} {d.surname}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: 25 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Reason of Visit *</label>
+          <textarea
+            rows={4}
+            value={reasonVisit}
+            onChange={(e) => setReasonVisit(e.target.value)}
+            required
+            style={inputStyle}
+          />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <label style={{ fontWeight: "500", fontSize: "14px" }}>Treatment Made *</label>
+          <textarea
+            rows={4}
+            value={treatmentMade}
+            onChange={(e) => setTreatmentMade(e.target.value)}
+            required
+            style={inputStyle}
+          />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          style={{
+            background: "red",
+            color: "white",
+            border: "none",
+            padding: "10px 20px",
+            cursor: "pointer",
+            marginRight: 10,
+            fontWeight: "bold",
+          }}
+        >
+          SAVE RECORD
+        </button>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{ background: "white", border: "1px solid #ccc", padding: "10px 20px", cursor: "pointer" }}
+        >
+          BACK
+        </button>
+      </div>
+    </form>
+  );
+};
+
+// --- Component 4: Patient Details (With History View) ---
 
 interface PatientDetailsProps {
   patient: Patient;
@@ -393,31 +498,14 @@ const PatientDetails: React.FC<PatientDetailsProps> = ({ patient, onBack }) => {
   return (
     <div style={{ padding: 20 }}>
       <h2>PATIENT DETAILS</h2>
-
       <div
-        style={{
-          display: "flex",
-          gap: 25,
-          border: "1px solid #ddd",
-          borderRadius: 8,
-          padding: 20,
-          background: "#fff",
-        }}
+        style={{ display: "flex", gap: 25, border: "1px solid #ddd", borderRadius: 8, padding: 20, background: "#fff" }}
       >
-        <div
-          style={{
-            width: 280,
-            background: "#333",
-            color: "white",
-            padding: 20,
-          }}
-        >
+        <div style={{ width: 280, background: "#333", color: "white", padding: 20 }}>
           <h3>
             {patient.firstName} {patient.lastName}
           </h3>
-
           <hr style={{ borderColor: "#555" }} />
-
           <p>PID: {patient.pid}</p>
           <p>OPD: {patient.opd}</p>
           <p>IPD: {patient.ipd}</p>
@@ -426,77 +514,65 @@ const PatientDetails: React.FC<PatientDetailsProps> = ({ patient, onBack }) => {
           <p>Blood: {patient.bloodGroup}</p>
           <p>📞 {patient.phone}</p>
           <p style={{ color: "red" }}>✉ {patient.email}</p>
-
-          <button
-            onClick={onBack}
-            style={{
-              marginTop: 20,
-              width: "100%",
-              padding: 8,
-              cursor: "pointer",
-            }}
-          >
+          <button onClick={onBack} style={{ marginTop: 20, width: "100%", padding: 8, cursor: "pointer" }}>
             Back to List
           </button>
         </div>
-
         <div style={{ flex: 1 }}>
-          <h3>Medical Information</h3>
-
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
-          >
-            <thead>
-              <tr style={{ borderBottom: "2px solid #ccc" }}>
-                <th style={{ padding: 8, textAlign: "left" }}>Field</th>
-                <th style={{ padding: 8, textAlign: "left" }}>Value</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td style={{ padding: 8 }}>PID</td>
-                <td style={{ padding: 8 }}>{patient.pid}</td>
-              </tr>
-
-              <tr>
-                <td style={{ padding: 8 }}>OPD</td>
-                <td style={{ padding: 8 }}>{patient.opd}</td>
-              </tr>
-
-              <tr>
-                <td style={{ padding: 8 }}>IPD</td>
-                <td style={{ padding: 8 }}>{patient.ipd}</td>
-              </tr>
-
-              <tr>
-                <td style={{ padding: 8 }}>Blood Group</td>
-                <td style={{ padding: 8 }}>{patient.bloodGroup}</td>
-              </tr>
-
-              <tr>
-                <td style={{ padding: 8 }}>Phone</td>
-                <td style={{ padding: 8 }}>{patient.phone}</td>
-              </tr>
-
-              <tr>
-                <td style={{ padding: 8 }}>Email</td>
-                <td style={{ padding: 8 }}>{patient.email}</td>
-              </tr>
-            </tbody>
-          </table>
+          <h3>Clinical History</h3>
+          {!patient.records || patient.records.length === 0 ? (
+            <p>No historical medical entries recorded.</p>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "2px solid #ccc", background: "#eee" }}>
+                  <th style={{ padding: 8, textAlign: "left" }}>Date</th>
+                  <th style={{ padding: 8, textAlign: "left" }}>Type</th>
+                  <th style={{ padding: 8, textAlign: "left" }}>Doctor</th>
+                  <th style={{ padding: 8, textAlign: "left" }}>Reason</th>
+                  <th style={{ padding: 8, textAlign: "left" }}>Treatment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patient.records.map((rec, index) => (
+                  <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td style={{ padding: 8 }}>{rec.date.split("T")[0]}</td>
+                    <td style={{ padding: 8 }}>{rec.typeVisit}</td>
+                    <td style={{ padding: 8 }}>
+                      {rec.doctor ? `${rec.doctor.name} ${rec.doctor.surname}` : "Unassigned"}
+                    </td>
+                    <td style={{ padding: 8 }}>{rec.reasonVisit}</td>
+                    <td style={{ padding: 8 }}>{rec.treatmentMade}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
+// --- Main Container Orchestrator Component ---
+
 const Patients: React.FC = () => {
   const [filter, dispatch] = useReducer(patientsFilterReducer, {});
   const patientsContextValue = useMemo(() => ({ filter, dispatch }), [filter, dispatch]);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [view, setView] = useState<"LIST" | "NEW" | "EDIT" | "DETAILS" | "NEW_RECORD">("LIST");
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
+  useEffect(() => {
+    if (location.state?.view) {
+      setView(location.state.view);
+    } else {
+      setView("LIST");
+    }
+  }, [location.state]);
 
   const [patients, setPatients] = useState<Patient[]>([
     {
@@ -511,6 +587,7 @@ const Patients: React.FC = () => {
       bloodGroup: "A+",
       phone: "555-111-2222",
       email: "john.doe@email.com",
+      records: [],
     },
     {
       id: "2",
@@ -524,38 +601,37 @@ const Patients: React.FC = () => {
       bloodGroup: "O+",
       phone: "555-333-4444",
       email: "anna.smith@email.com",
-    },
-    {
-      id: "3",
-      pid: "PID-1003",
-      opd: "OPD-2003",
-      ipd: "IPD-3003",
-      firstName: "Michael",
-      lastName: "Brown",
-      dob: "1979-01-15",
-      gender: "Male",
-      bloodGroup: "B-",
-      phone: "555-555-6666",
-      email: "michael.brown@email.com",
+      records: [],
     },
   ]);
-
-  const [view, setView] = useState<"LIST" | "NEW" | "EDIT" | "DETAILS">("LIST");
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   const handleSavePatient = (savedPatient: Patient) => {
     setPatients((prev) => {
       const exists = prev.some((p) => p.id === savedPatient.id);
-
       if (exists) {
         return prev.map((p) => (p.id === savedPatient.id ? savedPatient : p));
       }
-
       return [...prev, savedPatient];
     });
+    setSelectedPatient(null);
+    navigate("/patients", { state: { view: "LIST" } });
+  };
+
+  const handleSaveMedicalRecord = (newRecord: MedicalRecord) => {
+    if (!selectedPatient) return;
+
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === selectedPatient.id) {
+          const currentRecords = p.records || [];
+          return { ...p, records: [...currentRecords, newRecord] };
+        }
+        return p;
+      })
+    );
 
     setSelectedPatient(null);
-    setView("LIST");
+    navigate("/patients", { state: { view: "LIST" } });
   };
 
   return (
@@ -564,17 +640,17 @@ const Patients: React.FC = () => {
         <BreadcrumbEl active={view === "LIST"}>
           <span
             onClick={() => {
-              setView("LIST");
               setSelectedPatient(null);
+              navigate("/patients", { state: { view: "LIST" } });
             }}
             style={{ cursor: "pointer" }}
           >
             Patients
           </span>
         </BreadcrumbEl>
-
-        {view === "NEW" && <BreadcrumbEl active>New</BreadcrumbEl>}
-        {view === "EDIT" && <BreadcrumbEl active>Edit</BreadcrumbEl>}
+        {view === "NEW" && <BreadcrumbEl active>New Profile</BreadcrumbEl>}
+        {view === "EDIT" && <BreadcrumbEl active>Edit Profile</BreadcrumbEl>}
+        {view === "NEW_RECORD" && <BreadcrumbEl active>New Encounter Record</BreadcrumbEl>}
         {view === "DETAILS" && selectedPatient && (
           <BreadcrumbEl active>
             {selectedPatient.firstName} {selectedPatient.lastName}
@@ -585,10 +661,7 @@ const Patients: React.FC = () => {
       {view === "LIST" && (
         <PatientsList
           patients={patients}
-          onAddNew={() => {
-            setSelectedPatient(null);
-            setView("NEW");
-          }}
+          onAddNew={() => navigate("/patients", { state: { view: "NEW" } })}
           onEdit={(patient) => {
             setSelectedPatient(patient);
             setView("EDIT");
@@ -597,6 +670,10 @@ const Patients: React.FC = () => {
             setSelectedPatient(patient);
             setView("DETAILS");
           }}
+          onAddNewRecord={(patient) => {
+            setSelectedPatient(patient);
+            setView("NEW_RECORD");
+          }}
         />
       )}
 
@@ -604,6 +681,17 @@ const Patients: React.FC = () => {
         <PatientForm
           patient={selectedPatient}
           onSave={handleSavePatient}
+          onBack={() => {
+            setSelectedPatient(null);
+            navigate("/patients", { state: { view: "LIST" } });
+          }}
+        />
+      )}
+
+      {view === "NEW_RECORD" && selectedPatient && (
+        <NewRecordForm
+          patient={selectedPatient}
+          onSaveRecord={handleSaveMedicalRecord}
           onBack={() => {
             setSelectedPatient(null);
             setView("LIST");
