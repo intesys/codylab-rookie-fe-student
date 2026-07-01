@@ -1,5 +1,5 @@
 import { PATIENTS_PATH } from "@config/paths";
-import { getNewDetailPath, getPath } from "@lib/utils";
+import { getPath } from "@lib/utils";
 import { Add, Search } from "@mui/icons-material";
 import { Button, Grid, SxProps } from "@mui/material";
 import React from "react";
@@ -25,7 +25,11 @@ const CallToActions: React.FC = () => {
       sx={{ justifyContent: "center", alignItems: "center" }}
     >
       <Grid size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-        <Button variant="contained" sx={IconSx} onClick={() => navigate(getNewDetailPath(PATIENTS_PATH))}>
+        <Button
+          variant="contained"
+          sx={IconSx}
+          onClick={() => navigate(getPath(PATIENTS_PATH), { state: { view: "NEW" } })}
+        >
           <Add sx={{ width: 60, height: 60 }} />
           Register new patient
         </Button>
