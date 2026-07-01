@@ -1,45 +1,50 @@
 import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
-import { DOCTORS_PATH } from "@config/paths";
+import { PATIENTS_PATH } from "@config/paths";
 import { getPath } from "@lib/utils";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Button, Card, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, FormControlLabel, Grid, Switch, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const DoctorEdit: React.FC = () => {
+const PatientEdit: React.FC = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "Filippo",
-    surname: "Dolci",
-    profession: "chirurgo",
-    email: "email.chenonghe1@gmail.com",
-    phone: "3490011222",
+    name: "Carlo",
+    surname: "Marchiori",
+    address: "Via Strade Perdute, 3",
+    opd: "1222",
+    idp: "32322",
+    bloodGroup: "B-",
+    chronicPatient: false,
+    notes: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({ ...prev, chronicPatient: e.target.checked }));
+  };
+
   return (
     <div>
-      {/* Breadcrumb corretto: rimosso il doppione Home e uniformato lo stile dei link */}
       <Breadcrumb>
         <BreadcrumbEl>
-          <Link to={getPath(DOCTORS_PATH)} style={{ textDecoration: "none", color: "#666" }}>
-            Doctors
+          <Link to={getPath(PATIENTS_PATH)} style={{ textDecoration: "none", color: "#666" }}>
+            Patients
           </Link>
         </BreadcrumbEl>
         <BreadcrumbEl active>Edit</BreadcrumbEl>
       </Breadcrumb>
 
+      {/* Titolo*/}
       <Typography variant="h6" sx={{ mt: 3, mb: 3, fontWeight: 700, color: "#333", fontSize: "1.15rem" }}>
-        EDIT DOCTOR
+        EDIT PATIENT
       </Typography>
-
-      <Box sx={{ mb: 1, color: "#666", fontSize: "14px" }}>Informazioni del dottore</Box>
 
       <Card
         sx={{
@@ -51,7 +56,7 @@ const DoctorEdit: React.FC = () => {
         }}
       >
         <Grid container spacing={3}>
-          {/* Nome */}
+          {/*Name, Surname, Address */}
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Name *"
@@ -64,8 +69,6 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Cognome */}
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
               label="Surname *"
@@ -78,14 +81,12 @@ const DoctorEdit: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
-
-          {/* Professione */}
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
-              label="Profession *"
-              name="profession"
+              label="Address *"
+              name="address"
               fullWidth
-              value={form.profession}
+              value={form.address}
               onChange={handleChange}
               variant="outlined"
               size="small"
@@ -93,13 +94,37 @@ const DoctorEdit: React.FC = () => {
             />
           </Grid>
 
-          {/* Email */}
+          {/*OPD, IDP, Blood Group */}
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField
-              label="Email *"
-              name="email"
+              label="OPD *"
+              name="opd"
               fullWidth
-              value={form.email}
+              value={form.opd}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField
+              label="IDP *"
+              name="idp"
+              fullWidth
+              value={form.idp}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField
+              label="Blood Group *"
+              name="bloodGroup"
+              fullWidth
+              value={form.bloodGroup}
               onChange={handleChange}
               variant="outlined"
               size="small"
@@ -107,23 +132,33 @@ const DoctorEdit: React.FC = () => {
             />
           </Grid>
 
-          {/* Numero di Telefono */}
-          <Grid size={{ xs: 12, md: 4 }}>
+          {/*Chronic Patient Switch */}
+          <Grid size={{ xs: 12 }}>
+            <FormControlLabel
+              control={<Switch checked={form.chronicPatient} onChange={handleSwitchChange} color="error" />}
+              label="Chronic patient"
+              sx={{ color: "#666" }}
+            />
+          </Grid>
+
+          {/*Notes */}
+          <Grid size={{ xs: 12 }}>
             <TextField
-              label="Phone number *"
-              name="phone"
+              label="Notes"
+              name="notes"
               fullWidth
-              value={form.phone}
+              multiline
+              rows={4}
+              value={form.notes}
               onChange={handleChange}
               variant="outlined"
-              size="small"
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
 
+          {/* Pulsanti d'azione */}
           <Grid size={{ xs: 12 }}>
             <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-              {/* Bottone SAVE Rosso */}
               <Button
                 variant="contained"
                 startIcon={<SaveIcon />}
@@ -144,7 +179,6 @@ const DoctorEdit: React.FC = () => {
                 Save
               </Button>
 
-              {/* Bottone BACK */}
               <Button
                 variant="outlined"
                 onClick={() => navigate(-1)}
@@ -171,4 +205,4 @@ const DoctorEdit: React.FC = () => {
   );
 };
 
-export default DoctorEdit;
+export default PatientEdit;

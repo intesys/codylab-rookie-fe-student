@@ -26,13 +26,12 @@ const DoctorNew: React.FC = () => {
 
   return (
     <div>
-      {/* Percorso di navigazione in alto: Home / Doctors / New */}
+      {/* Breadcrumb corretto: rimosso il doppione e pulito lo stile del link */}
       <Breadcrumb>
         <BreadcrumbEl>
-          <Link to={getPath(DOCTORS_PATH)}>Home</Link>
-        </BreadcrumbEl>
-        <BreadcrumbEl>
-          <Link to={getPath(DOCTORS_PATH)}>Doctors</Link>
+          <Link to={getPath(DOCTORS_PATH)} style={{ textDecoration: "none", color: "#666" }}>
+            Doctors
+          </Link>
         </BreadcrumbEl>
         <BreadcrumbEl active>New</BreadcrumbEl>
       </Breadcrumb>
