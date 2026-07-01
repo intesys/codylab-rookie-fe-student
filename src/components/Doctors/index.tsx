@@ -1,4 +1,5 @@
-import React, { Dispatch, useMemo, useReducer, useState } from "react";
+import React, { Dispatch, useEffect, useMemo, useReducer, useState } from "react";
+import { api } from "../../config/api"; // Assicurati che il percorso verso la tua istanza API sia corretto
 import { DoctorFilterDTO } from "../../generated/axios";
 import Breadcrumb from "../Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "../Breadcrumb/BreadcrumbEl";
@@ -24,6 +25,9 @@ export const DoctorsFilterContext: React.Context<IDoctorsFilterContext> = React.
   dispatch: (action) => {},
 });
 
+/* ==========================================================================
+   COMPONENTE: LISTA DEI DOTTORI
+   ========================================================================== */
 const DoctorsList: React.FC<{
   doctors: Doctor[];
   onAddNew: () => void;
@@ -139,6 +143,9 @@ const DoctorsList: React.FC<{
   );
 };
 
+/* ==========================================================================
+   COMPONENTE: FORM DI MODIFICA
+   ========================================================================== */
 const DoctorEditForm: React.FC<{
   doctor: Doctor;
   onSave: (doc: Doctor) => void;
@@ -246,6 +253,9 @@ const DoctorEditForm: React.FC<{
   );
 };
 
+/* ==========================================================================
+   COMPONENTE: DETTAGLI DEL DOTTORE
+   ========================================================================== */
 const DoctorDetails: React.FC<{ doctor: Doctor; onBack: () => void }> = ({ doctor, onBack }) => {
   return (
     <div style={{ padding: "20px" }}>
@@ -307,27 +317,72 @@ const DoctorDetails: React.FC<{ doctor: Doctor; onBack: () => void }> = ({ docto
   );
 };
 
+/* ==========================================================================
+   COMPONENTE PRINCIPALE (CONTAINER)
+   ========================================================================== */
 const Doctors: React.FC = () => {
   const [filter, dispatch] = useReducer(doctorsFilterReducer, {});
   const doctorsContextValue = useMemo(() => ({ filter, dispatch }), [filter, dispatch]);
 
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-
   const [view, setView] = useState<"LIST" | "NEW" | "EDIT" | "DETAILS">("LIST");
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
-  const handleSaveDoctor = (savedDoctor: Doctor) => {
-    setDoctors((prevDoctors) => {
-      const exists = prevDoctors.some((doc) => doc.id === savedDoctor.id);
-      if (exists) {
-        return prevDoctors.map((doc) => (doc.id === savedDoctor.id ? savedDoctor : doc));
-      } else {
-        return [...prevDoctors, savedDoctor];
-      }
-    });
+  // Carica l'elenco reale dei medici dall'API del backend
+  const loadDoctors = () => {
+    api.doctors
+      .getListDoctor(0, 100, "", {})
+      .then((response) => {
+        const mapped = (response.data ?? []).map((d: any) => ({
+          id: String(d.id ?? ""),
+          name: d.name ?? "",
+          surname: d.surname ?? "",
+          profession: d.profession ?? "",
+          email: d.email ?? "",
+          phone: d.phone ?? "",
+        }));
+        setDoctors(mapped);
+      })
+      .catch((err) => {
+        console.error("Failed to load doctors from server:", err);
+      });
+  };
 
-    setView("LIST");
-    setSelectedDoctor(null);
+  // Sincronizza lo stato con il backend all'avvio del componente
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
+  // Gestisce sia la creazione (POST) che la modifica (PUT) inviando i dati alle API
+  const handleSaveDoctor = (savedDoctor: Doctor) => {
+    const isEdit = Boolean(savedDoctor.id);
+
+    const apiCall = isEdit
+      ? api.doctors.updateDoctor(Number(savedDoctor.id), {
+          id: Number(savedDoctor.id),
+          name: savedDoctor.name,
+          surname: savedDoctor.surname,
+          profession: savedDoctor.profession,
+          email: savedDoctor.email,
+          phone: savedDoctor.phone,
+        })
+      : api.doctors.createDoctor({
+          name: savedDoctor.name,
+          surname: savedDoctor.surname,
+          profession: savedDoctor.profession,
+          email: savedDoctor.email,
+          phone: savedDoctor.phone,
+        });
+
+    apiCall
+      .then(() => {
+        loadDoctors(); // Ricarica la lista aggiornata direttamente dal database
+        setView("LIST");
+        setSelectedDoctor(null);
+      })
+      .catch((err) => {
+        console.error("Failed to save doctor:", err);
+      });
   };
 
   return (

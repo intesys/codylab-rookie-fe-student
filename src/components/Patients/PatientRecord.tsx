@@ -1,4 +1,4 @@
-import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
+/*import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { api } from "@config/api";
 import { PATIENTS_PATH } from "@config/paths";
@@ -168,3 +168,4 @@ const PatientRecord: React.FC = () => {
 };
 
 export default PatientRecord;
+*/

@@ -2,206 +2,192 @@ import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
 import BreadcrumbEl from "@components/Breadcrumb/BreadcrumbEl";
 import { api } from "@config/api";
 import { PATIENTS_PATH } from "@config/paths";
-import { PatientDTO, PatientRecordDTO } from "@generated/axios";
-import useGetDetail from "@hooks/useGetDetail";
-import { DetailType } from "@lib/types";
-import { generateAvatarImage, getBloodType, getEditDetailPath, getNewRecordDetailPath, getPath } from "@lib/utils";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import {
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { PatientDTO } from "@generated/axios";
+import { getPath } from "@lib/utils";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SearchIcon from "@mui/icons-material/Search";
+import { Avatar, Box, Button, Card, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const EMPTY_PATIENT: PatientDTO = {};
-
-const PatientIndex: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const IndexPatients: React.FC = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const [patient, loading] = useGetDetail<PatientDTO>(api.patients.getPatient, EMPTY_PATIENT, Number(id));
-  const [records, setRecords] = useState<PatientRecordDTO[]>([]);
 
-  useEffect(() => {
-    if (patient?.patientRecords) {
-      setRecords(patient.patientRecords);
-    }
-  }, [patient]);
+  const [patients, setPatients] = useState<PatientDTO[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleDeleteRecord = (recordId: number) => {
-    api.patientRecords
-      .deletePatientRecord(recordId)
-      .then(() => {
-        enqueueSnackbar("Record deleted successfully", { variant: "success" });
-        setRecords((prev) => prev.filter((r) => r.id !== recordId));
+  const [searchPid, setSearchPid] = useState("");
+  const [searchOpd, setSearchOpd] = useState("");
+  const [searchIdp, setSearchIdp] = useState("");
+
+  const fetchPatients = () => {
+    setLoading(true);
+    api.patients
+      .getListPatient(0, 100, "", {})
+      .then((res) => {
+        setPatients(res.data ?? []);
       })
-      .catch((err) => enqueueSnackbar(`Error: ${err.message}`, { variant: "error" }));
+      .catch((err) => {
+        enqueueSnackbar(`Error loading patients: ${err.message}`, { variant: "error" });
+      })
+      .finally(() => setLoading(false));
   };
 
-  const lastRecord = records.length > 0 ? records[records.length - 1] : null;
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
-  if (loading) return <Typography>Loading patient data...</Typography>;
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchPid && !searchOpd && !searchIdp) {
+      fetchPatients();
+      return;
+    }
+
+    const filtered = patients.filter((p) => {
+      const matchPid = searchPid ? p.id === Number(searchPid) : true;
+      const matchOpd = searchOpd ? p.opd === Number(searchOpd) : true;
+      const matchIdp = searchIdp ? p.idp === Number(searchIdp) : true;
+      return matchPid && matchOpd && matchIdp;
+    });
+    setPatients(filtered);
+  };
+
+  const handleNavigateNew = () => {
+    const basePath = getPath(PATIENTS_PATH);
+    const newPath = `${basePath}/new`.replace(/\/\//g, "/");
+    navigate(newPath);
+  };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+    <Box sx={{ p: 1 }}>
       <Breadcrumb>
-        <BreadcrumbEl>
-          <Link to={getPath(PATIENTS_PATH)}>Patients</Link>
-        </BreadcrumbEl>
-        <BreadcrumbEl active>Detail</BreadcrumbEl>
+        <BreadcrumbEl active>Patients</BreadcrumbEl>
       </Breadcrumb>
 
-      <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {/* CARD DETTAGLIO PAZIENTE */}
-        <Box sx={{ width: 300 }}>
-          <Box sx={{ bgcolor: "white", p: 3, borderRadius: 1, border: "1px solid #e0e0e0" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Avatar
-                src={generateAvatarImage(DetailType.PATIENT, patient.id)}
-                alt={`${patient.name}`}
-                sx={{ width: 56, height: 56 }}
-              />
-              <Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <Typography variant="h6">
-                    {patient.name} <strong>{patient.surname}</strong>
-                  </Typography>
-                  <EditIcon
-                    sx={{ fontSize: 16, color: "#e57373", cursor: "pointer", ml: 0.5 }}
-                    onClick={() => navigate(getEditDetailPath(PATIENTS_PATH, patient.id))}
-                  />
-                </Box>
-                <Typography variant="body2" sx={{ color: "#666" }}>
-                  {patient.address ?? "-"}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, mt: 1 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700, letterSpacing: 0.5 }}>
+          PATIENTS DATABASE
+        </Typography>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<PersonAddIcon />}
+          onClick={handleNavigateNew}
+          sx={{ borderRadius: 2, fontWeight: 600, px: 2 }}
+        >
+          ADD NEW PATIENT
+        </Button>
+      </Box>
 
-          {/* INFO CLINICHE DI SINTESI */}
-          <Box
-            sx={{
-              bgcolor: "#3a3a3a",
-              color: "white",
-              p: 3,
-              borderRadius: 1,
-              mt: 2,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
+      <Box
+        component="form"
+        onSubmit={handleSearch}
+        sx={{
+          bgcolor: "white",
+          p: 3,
+          borderRadius: 2,
+          border: "1px solid #e0e0e0",
+          mb: 4,
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
+          FIND A PATIENT
+        </Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2.5 }}>
+          Insert the information of patient
+        </Typography>
+
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 2, alignItems: "center" }}>
+          <TextField
+            label="Patient ID (PID)"
+            size="small"
+            type="number"
+            value={searchPid}
+            onChange={(e) => setSearchPid(e.target.value)}
+          />
+          <TextField
+            label="Outpatient Number (OPD)"
+            size="small"
+            type="number"
+            value={searchOpd}
+            onChange={(e) => setSearchOpd(e.target.value)}
+          />
+          <TextField
+            label="Inpatient Number (IDP)"
+            size="small"
+            type="number"
+            value={searchIdp}
+            onChange={(e) => setSearchIdp(e.target.value)}
+          />
+          <Button
+            type="submit"
+            variant="outlined"
+            color="error"
+            startIcon={<SearchIcon />}
+            sx={{ height: "40px", px: 3, fontWeight: 600 }}
           >
-            <Typography variant="overline" sx={{ color: "#bdbdbd", fontSize: 10 }}>
-              HEALTH INFORMATION
-            </Typography>
-            <Box>
-              <Typography variant="caption" sx={{ color: "#9e9e9e" }}>
-                OPD
-              </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {patient.opd ?? "-"}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: "#9e9e9e" }}>
-                BLOOD GROUP
-              </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                {patient.bloodGroup ? getBloodType(patient.bloodGroup) : "-"}
-              </Typography>
-            </Box>
-            <Divider sx={{ borderColor: "#555" }} />
-            <Typography variant="body2" sx={{ color: patient.chronicPatient ? "#ef9a9a" : "#9e9e9e", fontWeight: 700 }}>
-              CHRONIC PATIENT: {patient.chronicPatient ? "YES" : "NO"}
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* TABELLA RECORD CLINICI */}
-        <Box sx={{ flex: 1, bgcolor: "white", p: 2, borderRadius: 1, border: "1px solid #e0e0e0" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 500 }}>
-              Medical Records
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => navigate(getNewRecordDetailPath(PATIENTS_PATH, patient.id))}
-            >
-              + Add Record
-            </Button>
-          </Box>
-          <TableContainer component={Paper} variant="outlined" sx={{ boxShadow: "none" }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Type of Visit</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Reason</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Treatment</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Doctor</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="right">
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {records.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ color: "#9e9e9e", py: 3 }}>
-                      No records found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  records.map((rec) => (
-                    <TableRow
-                      key={rec.id}
-                      hover
-                      onClick={() => navigate(`${getDetailPath(PATIENTS_PATH, patient.id)}/record/${rec.id}/edit`)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <TableCell sx={{ color: "#e57373" }}>{rec.date ?? "-"}</TableCell>
-                      <TableCell>{rec.typeVisit ?? "-"}</TableCell>
-                      <TableCell>{rec.reasonVisit ?? "-"}</TableCell>
-                      <TableCell>{rec.treatmentMade ?? "-"}</TableCell>
-                      <TableCell>{rec.doctor ? `${rec.doctor.name} ${rec.doctor.surname}` : "-"}</TableCell>
-                      <TableCell align="right">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (rec.id) handleDeleteRecord(rec.id);
-                          }}
-                          sx={{ "&:hover": { color: "#f44336" } }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+            SEARCH
+          </Button>
         </Box>
       </Box>
+
+      {loading ? (
+        <Typography align="center">Loading patients database...</Typography>
+      ) : (
+        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 3 }}>
+          {patients.map((p) => (
+            <Card
+              key={p.id}
+              onClick={() => navigate(`/patients/${p.id}`)}
+              sx={{
+                p: 3,
+                textAlign: "center",
+                cursor: "pointer",
+                borderRadius: 2,
+                border: "1px solid #e0e0e0",
+                boxShadow: "none",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": { transform: "translateY(-4px)", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" },
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                {p.name} {p.surname}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500, mb: 3 }}>
+                PID: <strong style={{ color: "#333" }}>{p.id}</strong> | OPD:{" "}
+                <strong style={{ color: "#333" }}>{p.opd ?? "-"}</strong> | IDP:{" "}
+                <strong style={{ color: "#333" }}>{p.idp ?? "-"}</strong>
+              </Typography>
+
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Avatar
+                  sx={{
+                    width: 90,
+                    height: 90,
+                    bgcolor: p.id && p.id % 2 === 0 ? "#757575" : "#1976d2",
+                    boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, alignItems: "center" }}>
+                    <Box sx={{ width: 40, height: 12, bgcolor: "rgba(255,255,255,0.3)", borderRadius: 1 }} />
+                    <Box sx={{ width: 25, height: 6, bgcolor: "rgba(255,255,255,0.5)", borderRadius: 1 }} />
+                  </Box>
+                </Avatar>
+              </Box>
+            </Card>
+          ))}
+          {patients.length === 0 && (
+            <Typography sx={{ gridColumn: "1 / -1", color: "text.secondary", py: 4 }} align="center">
+              No patients found in the database.
+            </Typography>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };
 
-export default PatientIndex;
+export default IndexPatients;

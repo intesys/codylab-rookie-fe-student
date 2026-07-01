@@ -3,47 +3,39 @@ import Doctor from "@components/Doctor";
 import Doctors from "@components/Doctors";
 import Home from "@components/Home";
 import News from "@components/News";
-import Patient from "@components/Patient";
 import Patients from "@components/Patients";
+import NewPatient from "@components/Patients/newPatient";
+import NewPatientRecord from "@components/Patients/newPatientRecord";
+import PatientDetail from "@components/Patients/patientDetail";
+import PatientEdit from "@components/Patients/patientEdit";
 import Pharmacy from "@components/Pharmacy";
 import Ward from "@components/Ward";
-import {
-  BILLING_PATH,
-  DASHBOARD_PATH,
-  DOCTORS_PATH,
-  HOME_PATH,
-  NEWS_PATH,
-  PATIENTS_PATH,
-  PHARMACY_PATH,
-  WARD_PATH,
-} from "@config/paths";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path={HOME_PATH}>
-        <Route index element={<Navigate to={DASHBOARD_PATH} />} />
-        <Route path={DASHBOARD_PATH} element={<Home />} />
-        <Route path={PATIENTS_PATH}>
-          <Route index element={<Patients />} />
-          <Route path=":id" element={<Patient />} />
-          {/* <Route path="new" element={<PatientNew />} />
-          <Route path=":id/edit" element={<PatientEdit />} />
-          <Route path={`:id/${PATIENTS_RECORDS_PATH}/new`} element={<PatientRecordNew />} /> */}
-        </Route>
-        <Route path={DOCTORS_PATH}>
-          <Route index element={<Doctors />} />
-          <Route path=":id" element={<Doctor />} />
-          {/* <Route path=":id/edit" element={<DoctorEdit />} />
-          <Route path="new" element={<DoctorNew />} /> */}
-        </Route>
-        <Route path={PHARMACY_PATH} element={<Pharmacy />} />
-        <Route path={WARD_PATH} element={<Ward />} />
-        <Route path={BILLING_PATH} element={<Billing />} />
-        <Route path={NEWS_PATH} element={<News />} />
-      </Route>
+      {/* Rotte di Base */}
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={<Home />} />
+
+      {/* Rotte Pazienti (Esplicite e senza inghippi di annidamento) */}
+      <Route path="/patients" element={<Patients />} />
+      <Route path="/patients/new" element={<NewPatient />} />
+      <Route path="/patients/:id" element={<PatientDetail />} />
+      <Route path="/patients/:id/edit" element={<PatientEdit />} />
+      <Route path="/patients/:id/record/new" element={<NewPatientRecord />} />
+
+      {/* Rotte Dottori */}
+      <Route path="/doctors" element={<Doctors />} />
+      <Route path="/doctors/:id" element={<Doctor />} />
+
+      {/* Altre sezioni */}
+      <Route path="/pharmacy" element={<Pharmacy />} />
+      <Route path="/ward" element={<Ward />} />
+      <Route path="/billing" element={<Billing />} />
+      <Route path="/news" element={<News />} />
     </Routes>
   );
 };

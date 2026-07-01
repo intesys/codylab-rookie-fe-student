@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Doctor } from "./index";
+
+// Definiamo l'interfaccia direttamente qui per evitare conflitti di importazione con index.tsx
+interface Doctor {
+  id: string;
+  name: string;
+  surname: string;
+  profession: string;
+  email: string;
+  phone: string;
+}
 
 interface NewDoctorProps {
   onSave: (doc: Doctor) => void;
@@ -17,7 +26,7 @@ const NewDoctor: React.FC<NewDoctorProps> = ({ onSave, onBack }) => {
     e.preventDefault();
 
     onSave({
-      id: Date.now().toString(),
+      id: "", // Lasciamo vuoto l'ID così il server genererà quello corretto sul database
       name,
       surname,
       profession,
@@ -71,7 +80,12 @@ const NewDoctor: React.FC<NewDoctorProps> = ({ onSave, onBack }) => {
         <div>
           <label>Email *</label>
           <br />
-          <input value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", padding: "8px" }} />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ width: "100%", padding: "8px" }}
+          />
         </div>
         <div>
           <label>Phone number *</label>
